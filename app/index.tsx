@@ -5,17 +5,14 @@ export default function Home() {
   return (
     <View style={styles.container}>
 
-      {/* MENU */}
       <View style={styles.menu}>
         <View style={styles.line} />
         <View style={styles.line} />
         <View style={styles.line} />
       </View>
 
-      {/* TÍTULO */}
       <Text style={styles.title}>Olá!</Text>
 
-      {/* TEXTO */}
       <Text style={styles.subtitle}>
         Bem vindo ao Meau!{"\n"}
         Aqui você pode adotar, doar e ajudar{"\n"}
@@ -23,17 +20,14 @@ export default function Home() {
         Qual o seu interesse?
       </Text>
 
-      {/* BOTÕES */}
       <View style={styles.buttonsContainer}>
         <CustomButton text="ADOTAR" />
         <CustomButton text="AJUDAR" />
         <CustomButton text="CADASTRAR ANIMAL" />
       </View>
 
-      {/* LOGIN */}
       <Text style={styles.login}>login</Text>
 
-      {/* LOGO */}
       <Text style={styles.logo}>meau</Text>
 
     </View>
@@ -56,7 +50,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  // MENU (canto superior)
   menu: {
     position: 'absolute',
     top: 60,
@@ -70,7 +63,6 @@ const styles = StyleSheet.create({
     marginVertical: 2,
   },
 
-  // TÍTULO
   title: {
     marginTop: 100,
     fontSize: 52,
@@ -78,7 +70,6 @@ const styles = StyleSheet.create({
     color: '#F2C94C'
   },
 
-  // TEXTO
   subtitle: {
     marginTop: 30,
     textAlign: 'center',
@@ -88,7 +79,6 @@ const styles = StyleSheet.create({
     width: '100%'
   },
 
-  // BOTÕES
   buttonsContainer: {
     marginTop: 50,
     width: '80%',
@@ -109,7 +99,6 @@ const styles = StyleSheet.create({
     color: '#333',
   },
 
-  // LOGIN
   login: {
     marginTop: 30,
     color: '#6FCF97',
@@ -118,7 +107,6 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
 
-  // LOGO (embaixo fixo)
   logo: {
     position: 'absolute',
     bottom: 40,

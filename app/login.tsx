@@ -25,13 +25,11 @@ export default function Login() {
   return (
     <View style={styles.container}>
 
-      {/* HEADER */}
       <View style={styles.header}>
         <Text style={styles.menu}>≡</Text>
         <Text style={styles.title}>Login</Text>
       </View>
 
-      {/* FORM */}
       <View style={styles.form}>
         <TextInput
           placeholder="Email"
@@ -51,7 +49,6 @@ export default function Login() {
         />
       </View>
 
-      {/* BOTÕES */}
       <View style={styles.buttonGroup}>
         <TouchableOpacity style={styles.primaryButton} onPress={handleLogin}>
           <Text style={styles.primaryText}>ENTRAR</Text>

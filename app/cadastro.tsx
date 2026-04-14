@@ -4,13 +4,11 @@ export default function Cadastro() {
   return (
     <View style={styles.container}>
 
-      {/* HEADER */}
       <View style={styles.header}>
         <Text style={styles.back}>←</Text>
         <Text style={styles.titleHeader}>Cadastro</Text>
       </View>
 
-      {/* CONTEÚDO */}
       <View style={styles.content}>
         <Text style={styles.title}>Ops!</Text>
 
@@ -41,7 +39,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
 
-  /* HEADER */
   header: {
     backgroundColor: '#A8DAD6',
     height: 90,
@@ -62,7 +59,6 @@ const styles = StyleSheet.create({
     color: '#434343',
   },
 
-  /* CONTEÚDO */
   content: {
     flex: 1,
     alignItems: 'center',
