@@ -1,24 +1,23 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { useFonts } from 'expo-font';
+import { Courgette_400Regular } from "@expo-google-fonts/courgette"
+import { Roboto_400Regular, Roboto_700Bold } from "@expo-google-fonts/roboto"
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+export default function Layout() {
+  const [fontsLoaded] = useFonts({
+    Courgette_400Regular,
+    Roboto_400Regular,
+    Roboto_700Bold,
+  })
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
-
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
+  if (!fontsLoaded) {
+    return null;
+  }
+  
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <Stack
+      screenOptions={{ headerShown: false }}
+      initialRouteName="login"
+    />
   );
 }
