@@ -1,117 +1,148 @@
-import { Courgette_400Regular } from '@expo-google-fonts/courgette';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { useRouter } from 'expo-router';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebaseConfig';
 
-export default function Home() {
+export default function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const router = useRouter();
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      alert('Preencha email e senha');
+      return;
+    }
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      router.replace('/home');
+    } catch (error: any) {
+      router.push('/cadastro');
+    }
+  };
+
   return (
     <View style={styles.container}>
 
-      <View style={styles.menu}>
-        <View style={styles.line} />
-        <View style={styles.line} />
-        <View style={styles.line} />
+      <View style={styles.header}>
+        <Text style={styles.menu}>≡</Text>
+        <Text style={styles.title}>Login</Text>
       </View>
 
-      <Text style={styles.title}>Olá!</Text>
+      <View style={styles.form}>
+        <TextInput
+          placeholder="Email"
+          placeholderTextColor="#BDBDBD"
+          style={styles.input}
+          value={email}
+          onChangeText={setEmail}
+        />
 
-      <Text style={styles.subtitle}>
-        Bem vindo ao Meau!{"\n"}
-        Aqui você pode adotar, doar e ajudar{"\n"}
-        cães e gatos com facilidade.{"\n"}
-        Qual o seu interesse?
-      </Text>
-
-      <View style={styles.buttonsContainer}>
-        <CustomButton text="ADOTAR" />
-        <CustomButton text="AJUDAR" />
-        <CustomButton text="CADASTRAR ANIMAL" />
+        <TextInput
+          placeholder="Senha"
+          placeholderTextColor="#BDBDBD"
+          secureTextEntry
+          style={styles.input}
+          value={password}
+          onChangeText={setPassword}
+        />
       </View>
 
-      <Text style={styles.login}>login</Text>
+      <View style={styles.buttonGroup}>
+        <TouchableOpacity style={styles.primaryButton} onPress={handleLogin}>
+          <Text style={styles.primaryText}>ENTRAR</Text>
+        </TouchableOpacity>
 
-      <Text style={styles.logo}>meau</Text>
+        <TouchableOpacity style={styles.facebookButton}>
+          <Text style={styles.socialText}>ENTRAR COM FACEBOOK</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.googleButton}>
+          <Text style={styles.socialText}>ENTRAR COM GOOGLE</Text>
+        </TouchableOpacity>
+      </View>
 
     </View>
-  );
-}
-
-function CustomButton({ text }: { text: string }) {
-  return (
-    <TouchableOpacity style={styles.button}>
-      <Text style={styles.buttonText}>{text}</Text>
-    </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    fontFamily: 'Roboto_400Regular',
-    backgroundColor: '#F2F2F2',
-    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+
+  header: {
+    backgroundColor: '#A8DAD6',
+    height: 90,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    paddingHorizontal: 20,
+    paddingBottom: 10,
   },
 
   menu: {
-    position: 'absolute',
-    top: 60,
-    left: 30,
-  },
-
-  line: {
-    width: 25,
-    height: 3,
-    backgroundColor: '#6FCF97',
-    marginVertical: 2,
+    fontSize: 28,
+    marginRight: 20,
   },
 
   title: {
-    marginTop: 100,
-    fontSize: 52,
-    fontFamily: 'Courgette_400Regular',
-    color: '#F2C94C'
+    fontSize: 24,
+    fontFamily: 'Roboto_700Bold',
+    color: '#434343',
   },
 
-  subtitle: {
-    marginTop: 30,
-    textAlign: 'center',
-    color: '#7A7A7A',
-    fontSize: 16,
-    lineHeight: 22,
-    width: '100%'
+  form: {
+    marginTop: 60,
+    paddingHorizontal: 20,
   },
 
-  buttonsContainer: {
-    marginTop: 50,
-    width: '80%',
-    gap: 15,
+  input: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#BDBDBD',
+    marginBottom: 30,
+    paddingVertical: 10,
+    fontFamily: 'Roboto_400Regular',
   },
 
-  button: {
-    backgroundColor: '#F2C94C',
-    height: 50,
-    borderRadius: 6,
-    justifyContent: 'center',
+  buttonGroup: {
+    marginTop: 80,
     alignItems: 'center',
+  },
+
+  primaryButton: {
+    backgroundColor: '#88C9BF',
+    width: '80%',
+    padding: 15,
+    alignItems: 'center',
+    marginBottom: 30,
     elevation: 3,
   },
 
-  buttonText: {
-    fontWeight: 'bold',
-    color: '#333',
+  primaryText: {
+    fontFamily: 'Roboto_700Bold',
+    color: '#434343',
   },
 
-  login: {
-    marginTop: 30,
-    color: '#6FCF97',
-    fontSize: 16,
-    width: '100%',
-    textAlign: 'center'
+  facebookButton: {
+    backgroundColor: '#3b5998',
+    width: '80%',
+    padding: 15,
+    alignItems: 'center',
+    marginBottom: 15,
   },
 
-  logo: {
-    position: 'absolute',
-    bottom: 40,
-    fontSize: 36,
-    color: '#6FCF97',
-    fontWeight: 'bold',
+  googleButton: {
+    backgroundColor: '#EA4335',
+    width: '80%',
+    padding: 15,
+    alignItems: 'center',
+  },
+
+  socialText: {
+    color: '#fff',
+    fontFamily: 'Roboto_700Bold',
   },
 });

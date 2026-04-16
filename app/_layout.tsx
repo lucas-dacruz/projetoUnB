@@ -15,9 +15,6 @@ export default function Layout() {
   }
   
   return (
-    <Stack
-      screenOptions={{ headerShown: false }}
-      initialRouteName="login"
-    />
+    <Stack screenOptions={{ headerShown: false }}/>
   );
 }

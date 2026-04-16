@@ -1,11 +1,16 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
 
 export default function Cadastro() {
+  const router = useRouter()
+
   return (
     <View style={styles.container}>
 
       <View style={styles.header}>
-        <Text style={styles.back}>←</Text>
+        <TouchableOpacity onPress={() => router.replace('/')}>
+          <Text style={styles.back}>←</Text>
+        </TouchableOpacity>
         <Text style={styles.titleHeader}>Cadastro</Text>
       </View>
 
@@ -24,7 +29,7 @@ export default function Cadastro() {
           Já possui cadastro?
         </Text>
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={() => router.push('/')}>
           <Text style={styles.buttonText}>FAZER LOGIN</Text>
         </TouchableOpacity>
       </View>
