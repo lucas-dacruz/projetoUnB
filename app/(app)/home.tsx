@@ -1,17 +1,20 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
 
 export default function Home() {
   const router = useRouter();
+  const navigation = useNavigation<DrawerNavigationProp<{}>>();
 
   return (
     <View style={styles.container}>
 
-      <View style={styles.menu}>
+      <TouchableOpacity style={styles.menu} onPress={() => navigation.openDrawer()}>
         <View style={styles.line} />
         <View style={styles.line} />
         <View style={styles.line} />
-      </View>
+      </TouchableOpacity>
 
       <Text style={styles.title}>Olá!</Text>
 
@@ -49,7 +52,6 @@ function CustomButton({ text }: { text: string }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    fontFamily: 'Roboto_400Regular',
     backgroundColor: '#F2F2F2',
     alignItems: 'center',
   },
@@ -71,7 +73,7 @@ const styles = StyleSheet.create({
     marginTop: 100,
     fontSize: 52,
     fontFamily: 'Courgette_400Regular',
-    color: '#F2C94C'
+    color: '#F2C94C',
   },
 
   subtitle: {
@@ -80,7 +82,7 @@ const styles = StyleSheet.create({
     color: '#7A7A7A',
     fontSize: 16,
     lineHeight: 22,
-    width: '100%'
+    width: '100%',
   },
 
   buttonsContainer: {
@@ -108,7 +110,7 @@ const styles = StyleSheet.create({
     color: '#6FCF97',
     fontSize: 16,
     width: '100%',
-    textAlign: 'center'
+    textAlign: 'center',
   },
 
   logo: {

@@ -17,7 +17,7 @@ export default function Login() {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.replace('/home');
+      router.replace('/(app)/home');
     } catch (error: any) {
       router.push('/cadastro');
     }
