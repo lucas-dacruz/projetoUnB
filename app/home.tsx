@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function Home() {
   const router = useRouter();
@@ -25,7 +25,10 @@ export default function Home() {
       <View style={styles.buttonsContainer}>
         <CustomButton text="ADOTAR" />
         <CustomButton text="AJUDAR" />
-        <CustomButton text="CADASTRAR ANIMAL" />
+        <CustomButton 
+          text="CADASTRAR ANIMAL"
+          onPress={() => router.push('/registro_animal')}
+        />
       </View>
 
       <TouchableOpacity onPress={() => router.replace('/')}>
@@ -38,9 +41,9 @@ export default function Home() {
   );
 }
 
-function CustomButton({ text }: { text: string }) {
+function CustomButton({ text, onPress }: { text: string; onPress?: () => void }) {
   return (
-    <TouchableOpacity style={styles.button}>
+    <TouchableOpacity style={styles.button} onPress={onPress}>
       <Text style={styles.buttonText}>{text}</Text>
     </TouchableOpacity>
   );
