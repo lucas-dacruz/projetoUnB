@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import { useRouter } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
+import { db } from '@/firebaseConfig';
+import { collection, addDoc } from 'firebase/firestore';
+
 
 export default function RegistroAnimal() {
   const router = useRouter();
@@ -18,6 +22,27 @@ export default function RegistroAnimal() {
   const [sobre, setSobre] = useState('');
   const [nomeMedicamento, setNomeMedicamento] = useState('');
   const [especificacaoObjetos, setEspecificacaoObjetos] = useState('');
+  const [imagem, setImagem] = useState<string | null>(null);
+
+  const escolherImagem = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permission.granted) {
+      alert('Permissão necessária!');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      quality: 0.2,
+      base64: true,
+    });
+
+    if (!result.canceled) {
+      const img = `data:image/jpeg;base64,${result.assets[0].base64}`;
+      setImagem(img);
+    }
+  };
 
   // ESTADO PARA SELEÇÕES MÚLTIPLAS (Temperamento, Saúde, Exigências)
   const [selecoes, setSelecoes] = useState<string[]>([]);
@@ -44,6 +69,31 @@ export default function RegistroAnimal() {
       <Text style={[styles.rectText, selecoes.includes(label) && styles.rectTextSelected]}>{label}</Text>
     </TouchableOpacity>
   );
+
+  const salvarAnimal = async () => {
+    try {
+      await addDoc(collection(db, 'animais'), {
+        nome,
+        especie,
+        sexo,
+        porte,
+        idade,
+        doencas,
+        sobre,
+        nomeMedicamento,
+        especificacaoObjetos,
+        selecoes,
+        tipoCadastro: abaAtiva,
+        imagemBase64: imagem,
+        criadoEm: new Date()
+      });
+
+      router.push('./sucesso_animal');
+    } catch (error) {
+      console.log(error);
+      alert('Erro ao salvar!');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -94,7 +144,7 @@ export default function RegistroAnimal() {
             <TextInput style={styles.input} placeholder="Nome do animal" placeholderTextColor="#bdbdbd" value={nome} onChangeText={setNome} />
 
             <Text style={styles.sectionLabelVerde}>FOTOS DO ANIMAL</Text>
-            <TouchableOpacity style={styles.photoBox}>
+            <TouchableOpacity style={styles.photoBox} onPress={escolherImagem}>
               <Text style={styles.plus}>+</Text>
               <Text style={styles.photoText}>adicionar fotos</Text>
             </TouchableOpacity>
@@ -197,7 +247,7 @@ export default function RegistroAnimal() {
 
             <TouchableOpacity 
               style={styles.buttonFinal} 
-              onPress={() => router.push('/sucesso_animal')}
+              onPress={salvarAnimal}
             >
               <Text style={styles.buttonText}>
                 {abaAtiva === 'ADOCAO' ? "COLOCAR PARA ADOÇÃO" : abaAtiva === 'APADRINHAR' ? "PROCURAR PADRINHO" : "PROCURAR AJUDA"}
