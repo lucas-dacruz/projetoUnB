@@ -21,7 +21,10 @@ export default function Cadastro() {
           Você não pode realizar esta ação sem possuir um cadastro.
         </Text>
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity 
+          style={styles.button} 
+          onPress={() => router.push('/registro_pessoal' as any)}
+        >
           <Text style={styles.buttonText}>FAZER CADASTRO</Text>
         </TouchableOpacity>
 
