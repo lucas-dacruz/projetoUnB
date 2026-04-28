@@ -1,5 +1,7 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
+import { db } from '@/firebaseConfig';
+import { collection, addDoc } from 'firebase/firestore';
 import {
   Alert,
   Platform,
@@ -10,6 +12,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import ImageSelector from '@/components/ImageSelector';
 
 export default function CadastroPessoalForm() {
   const router = useRouter();
@@ -25,6 +28,7 @@ export default function CadastroPessoalForm() {
   const [usuario, setUsuario] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
+  const [imagemPerfil, setImagemPerfil] = useState<string | null>(null);
 
   const handleCadastro = () => {
     // 1. Verificação de obrigatoriedade
@@ -34,7 +38,6 @@ export default function CadastroPessoalForm() {
       } else {
         Alert.alert("Campos Obrigatórios", "Por favor, preencha todos os campos do formulário.");
       }
-      return;
     }
 
     // 2. Verificação de senha
@@ -44,20 +47,9 @@ export default function CadastroPessoalForm() {
       } else {
         Alert.alert("Erro na Senha", "A senha e a confirmação de senha não coincidem.");
       }
-      return;
     }
 
-    // 3. Sucesso
-    if (Platform.OS === 'web') {
-      alert("Cadastro feito com sucesso! Agora você já pode realizar o seu login.");
-      router.replace('/');
-    } else {
-      Alert.alert(
-        "Cadastro feito com sucesso!",
-        "Agora você já pode realizar o seu login.",
-        [{ text: "OK", onPress: () => router.replace('/') }]
-      );
-    }
+    salvarUsuario();
   };
 
   // Componente de Input com o "V" verde do Layout 5.3
@@ -77,6 +69,28 @@ export default function CadastroPessoalForm() {
       </View>
     </View>
   );
+
+  const salvarUsuario = async () => {
+    try {
+      await addDoc(collection(db, 'usuario'), {
+        nome,
+        idade,
+        email,
+        estado,
+        cidade,
+        endereco,
+        telefone,
+        usuario,
+        imagemBase64: imagemPerfil,
+        senha
+      });
+
+      router.push('/');
+    } catch (error) {
+      console.log(error);
+      alert('Erro ao criar usuário!');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -109,10 +123,7 @@ export default function CadastroPessoalForm() {
         {ValidatedInput("CONFIRMAÇÃO DE SENHA", confirmarSenha, setConfirmarSenha, "Confirmação de senha", { secureTextEntry: true })}
 
         <Text style={styles.groupTitle}>FOTO DE PERFIL</Text>
-        <TouchableOpacity style={styles.photoBox}>
-          <Text style={styles.plus}>+</Text>
-          <Text style={styles.photoText}>adicionar foto</Text>
-        </TouchableOpacity>
+        < ImageSelector imagem={imagemPerfil} setImagem={setImagemPerfil} />
 
         <TouchableOpacity style={styles.buttonFinal} onPress={handleCadastro}>
           <Text style={styles.buttonText}>FAZER CADASTRO</Text>
