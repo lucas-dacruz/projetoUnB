@@ -26,7 +26,8 @@ export default function Home() {
       </Text>
 
       <View style={styles.buttonsContainer}>
-        <CustomButton text="ADOTAR" />
+        <CustomButton text="ADOTAR" 
+        onPress={() => router.push('/adotar' as any)}/>
         <CustomButton text="AJUDAR" />
         <CustomButton 
           text="CADASTRAR ANIMAL"

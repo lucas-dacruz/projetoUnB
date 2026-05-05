@@ -8,6 +8,8 @@ export default function DrawerLayout() {
       screenOptions={{ headerShown: false }}
     >
       <Drawer.Screen name="home" options={{ title: 'Home' }} />
+      <Drawer.Screen name="adotar" options={{ title: 'Adotar' }} />
+      <Drawer.Screen name="detalhes_animal" options={{ title: 'Detalhes' }} />
     </Drawer>
   );
 }

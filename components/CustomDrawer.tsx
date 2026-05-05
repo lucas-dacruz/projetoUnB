@@ -100,7 +100,7 @@ export default function CustomDrawer() {
           <>
             <MenuItem label="Cadastrar um pet" onPress={() => router.push('/(app)/home')} />
             <Divider />
-            <MenuItem label="Adotar um pet" />
+            <MenuItem label="Adotar um pet" onPress={() => router.push('/adotar')}/>
             <Divider />
             <MenuItem label="Ajudar um pet" />
             <Divider />
