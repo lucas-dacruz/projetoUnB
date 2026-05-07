@@ -66,7 +66,8 @@ export default function RegistroAnimal() {
         selecoes,
         tipoCadastro: abaAtiva,
         imagemBase64: imagem,
-        criadoEm: new Date()
+        criadoEm: new Date(),
+        disponivel: true
       });
 
       router.push('./sucesso_animal');

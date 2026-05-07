@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { db } from '../../firebaseConfig'; 
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 
 export default function ListaAnimais() {
   const router = useRouter();
@@ -15,7 +15,11 @@ export default function ListaAnimais() {
   useEffect(() => {
     const buscarAnimais = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "animais"));
+        const queryAvailable = query(
+          collection(db, "animais"),
+          where("disponivel", "==", true)
+        );
+        const querySnapshot = await getDocs(queryAvailable);
         const lista: any[] = [];
         querySnapshot.forEach((doc) => {
           lista.push({ id: doc.id, ...doc.data() });
