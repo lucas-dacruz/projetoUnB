@@ -24,7 +24,7 @@ Projeto desenvolvido para a disciplina de **Desenvolvimento de Aplicativos** na 
 
 2. Configurar Variáveis de Ambiente:
 
-Crie um arquivo .env na raiz do projeto e adicione as credenciais do Firebase fornecidas pela equipe 
+   Crie um arquivo .env na raiz do projeto e adicione as credenciais do Firebase fornecidas pela equipe 
 
 3. Iniciar o projeto
 
