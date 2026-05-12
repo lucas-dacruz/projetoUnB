@@ -47,7 +47,6 @@ export default function DetalhesAnimal() {
 
   return (
     <View style={styles.container}>
-      {/* HEADER - SETA VOLTA PARA LISTA (ADOTAR)[cite: 2] */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <TouchableOpacity onPress={() => router.push('/adotar')}>
@@ -107,7 +106,6 @@ export default function DetalhesAnimal() {
           <Text style={styles.labelVerde}>MAIS SOBRE {animal.nome?.toUpperCase()}</Text>
           <Text style={styles.description}>{animal.sobre || "Sem descrição."}</Text>
 
-          {/* BOTÃO FINAL - VOLTA PARA HOME */}
           <TouchableOpacity 
             style={styles.buttonVoltar} 
             onPress={() => router.replace('/home')}

@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 
-// Ícones simples em texto (substitua por @expo/vector-icons se preferir)
 function Icon({ name }: { name: string }) {
   const icons: Record<string, string> = {
     pets: '🐾',
@@ -67,7 +66,6 @@ export default function CustomDrawer() {
     <View style={styles.container}>
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
 
-        {/* Cabeçalho */}
         <View style={styles.header}>
           <Image
             source={{ uri: 'https://i.pravatar.cc/64' }}
@@ -79,16 +77,14 @@ export default function CustomDrawer() {
           </View>
         </View>
 
-        {/* Itens do perfil */}
         <MenuItem label="Meu perfil" />
         <Divider />
-        <MenuItem label="Meus pets" onPress={() => router.push('/(app)/meusPets')} />
+        <MenuItem label="Meus pets" onPress={() => router.push('/(app)/meus_pets')} />
         <Divider />
         <MenuItem label="Favoritos" />
         <Divider />
         <MenuItem label="Chat" />
 
-        {/* Seção Atalhos */}
         <SectionHeader
           icon="pets"
           label="Atalhos"
@@ -108,7 +104,6 @@ export default function CustomDrawer() {
           </>
         )}
 
-        {/* Seção Informações */}
         <SectionHeader
           icon="info"
           label="Informações"
@@ -130,7 +125,6 @@ export default function CustomDrawer() {
           </>
         )}
 
-        {/* Seção Configurações */}
         <SectionHeader
           icon="settings"
           label="Configurações"
@@ -146,7 +140,6 @@ export default function CustomDrawer() {
 
       </ScrollView>
 
-      {/* Botão Sair */}
       <TouchableOpacity
         style={styles.logoutButton}
         onPress={() => router.replace('/')}
@@ -168,7 +161,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  // Cabeçalho
   header: {
     backgroundColor: '#88c9bf',
     height: 172,
@@ -196,7 +188,6 @@ const styles = StyleSheet.create({
     color: '#434343',
   },
 
-  // Itens do menu
   menuItem: {
     height: 48,
     justifyContent: 'center',
@@ -217,7 +208,6 @@ const styles = StyleSheet.create({
     width: 256,
   },
 
-  // Seções colapsáveis
   sectionHeader: {
     height: 48,
     flexDirection: 'row',

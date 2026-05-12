@@ -10,6 +10,7 @@ export default function DrawerLayout() {
       <Drawer.Screen name="home" options={{ title: 'Home' }} />
       <Drawer.Screen name="adotar" options={{ title: 'Adotar' }} />
       <Drawer.Screen name="detalhes_animal" options={{ title: 'Detalhes' }} />
+      <Drawer.Screen name="meus_pets" options={{ title: 'Meus pets' }} />
     </Drawer>
   );
 }

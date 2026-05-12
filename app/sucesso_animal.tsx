@@ -7,7 +7,6 @@ export default function SucessoAnimal() {
 
   return (
     <View style={styles.container}>
-      {/* Header mantendo o padrão visual */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.replace('/home')}>
           <Text style={styles.backIcon}>←</Text>
@@ -28,7 +27,7 @@ export default function SucessoAnimal() {
 
         <TouchableOpacity 
           style={styles.button} 
-          onPress={() => router.replace('/home')} // Ou para a tela de lista de pets se existir
+          onPress={() => router.replace('/home')}
         >
           <Text style={styles.buttonText}>MEUS PETS</Text>
         </TouchableOpacity>
@@ -54,7 +53,7 @@ const styles = StyleSheet.create({
   ebaText: { 
     fontSize: 53, 
     color: '#88C9BF', 
-    fontFamily: 'Courgette_400Regular', // Se tiver a fonte cursiva instalada
+    fontFamily: 'Courgette_400Regular',
     marginBottom: 40 
   },
   successText: { 

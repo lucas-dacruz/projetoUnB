@@ -17,7 +17,6 @@ import ImageSelector from '@/components/ImageSelector';
 export default function CadastroPessoalForm() {
   const router = useRouter();
 
-  // Estados para os campos (Layout 4.3)
   const [nome, setNome] = useState('');
   const [idade, setIdade] = useState('');
   const [email, setEmail] = useState('');
@@ -31,7 +30,6 @@ export default function CadastroPessoalForm() {
   const [imagemPerfil, setImagemPerfil] = useState<string | null>(null);
 
   const handleCadastro = () => {
-    // 1. Verificação de obrigatoriedade
     if (!nome || !idade || !email || !estado || !cidade || !endereco || !telefone || !usuario || !senha || !confirmarSenha) {
       if (Platform.OS === 'web') {
         alert("Campos Obrigatórios: Por favor, preencha todos os campos.");
@@ -40,7 +38,6 @@ export default function CadastroPessoalForm() {
       }
     }
 
-    // 2. Verificação de senha
     if (senha !== confirmarSenha) {
       if (Platform.OS === 'web') {
         alert("Erro na Senha: As senhas não coincidem.");
@@ -52,7 +49,6 @@ export default function CadastroPessoalForm() {
     salvarUsuario();
   };
 
-  // Componente de Input com o "V" verde do Layout 5.3
   const ValidatedInput = (label: string, value: string, setter: (v: string) => void, placeholder: string, props = {}) => (
     <View style={styles.inputWrapper}>
       <Text style={styles.sectionLabelVerde}>{label}</Text>

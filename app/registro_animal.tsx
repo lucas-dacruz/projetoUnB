@@ -9,10 +9,8 @@ import ImageSelector from '@/components/ImageSelector';
 export default function RegistroAnimal() {
   const router = useRouter();
 
-  // CONTROLE DE ABA ATIVA (Navegação Superior)
   const [abaAtiva, setAbaAtiva] = useState<'ADOCAO' | 'APADRINHAR' | 'AJUDA' | null>(null);
 
-  // ESTADOS DOS CAMPOS (Comuns a todos os layouts)
   const [nome, setNome] = useState('');
   const [especie, setEspecie] = useState('');
   const [sexo, setSexo] = useState('');
@@ -25,14 +23,12 @@ export default function RegistroAnimal() {
   const [imagem, setImagem] = useState<string | null>(null);
 
 
-  // ESTADO PARA SELEÇÕES MÚLTIPLAS (Temperamento, Saúde, Exigências)
   const [selecoes, setSelecoes] = useState<string[]>([]);
 
   const toggle = (item: string) => {
     setSelecoes(prev => prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]);
   };
 
-  // Funções auxiliares de renderização de botões (estilo retângulos cinzas)
   const renderBtn = (label: string, value: string, current: string, setter: (v: string) => void) => (
     <TouchableOpacity 
       style={[styles.rectBtn, current === value && styles.rectBtnSelected]} 
@@ -79,7 +75,6 @@ export default function RegistroAnimal() {
 
   return (
     <View style={styles.container}>
-      {/* HEADER FIXO */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.replace('/home')}>
           <Text style={styles.backIcon}>←</Text>
@@ -89,7 +84,6 @@ export default function RegistroAnimal() {
 
       <ScrollView contentContainerStyle={styles.form}>
         
-        {/* NAVEGAÇÃO SUPERIOR FIXA */}
         <Text style={styles.infoText}>Tenho interesse em cadastrar o animal para:</Text>
         <View style={styles.tabRow}>
           <TouchableOpacity 
@@ -114,21 +108,18 @@ export default function RegistroAnimal() {
           </TouchableOpacity>
         </View>
 
-        {/* CONTEÚDO DINÂMICO CONFORME ABA SELECIONADA */}
         {abaAtiva && (
           <View style={styles.dynamicContent}>
             <Text style={styles.activeLabel}>
               {abaAtiva === 'ADOCAO' ? 'Adoção' : abaAtiva === 'APADRINHAR' ? 'Apadrinhar' : 'Ajudar'}
             </Text>
 
-            {/* CAMPOS COMUNS: NOME E FOTOS */}
             <Text style={styles.sectionLabelVerde}>NOME DO ANIMAL</Text>
             <TextInput style={styles.input} placeholder="Nome do animal" placeholderTextColor="#bdbdbd" value={nome} onChangeText={setNome} />
 
             <Text style={styles.sectionLabelVerde}>FOTOS DO ANIMAL</Text>
             <ImageSelector imagem={imagem} setImagem={setImagem} />
 
-            {/* CAMPOS COMUNS: CARACTERÍSTICAS */}
             <Text style={styles.sectionLabelVerde}>ESPÉCIE</Text>
             <View style={styles.row}>{renderBtn("CACHORRO", "Cachorro", especie, setEspecie)}{renderBtn("GATO", "Gato", especie, setEspecie)}</View>
 
@@ -162,7 +153,6 @@ export default function RegistroAnimal() {
             </View>
             <TextInput style={styles.input} placeholder="Doenças do animal" placeholderTextColor="#bdbdbd" value={doencas} onChangeText={setDoencas} />
 
-            {/* SEÇÕES EXCLUSIVAS: ADOÇÃO (LAYOUT 1.1) */}
             {abaAtiva === 'ADOCAO' && (
               <View>
                 <Text style={styles.sectionLabelVerde}>EXIGÊNCIAS PARA ADOÇÃO</Text>
@@ -180,7 +170,6 @@ export default function RegistroAnimal() {
               </View>
             )}
 
-            {/* SEÇÕES EXCLUSIVAS: APADRINHAR (LAYOUT 2.2) */}
             {abaAtiva === 'APADRINHAR' && (
               <View>
                 <Text style={styles.sectionLabelVerde}>EXIGÊNCIAS PARA APADRINHAMENTO</Text>
@@ -197,7 +186,6 @@ export default function RegistroAnimal() {
               </View>
             )}
 
-            {/* SEÇÕES EXCLUSIVAS: AJUDA (LAYOUT 3.3) */}
             {abaAtiva === 'AJUDA' && (
               <View>
                 <Text style={styles.sectionLabelVerde}>NECESSIDADES DO ANIMAL</Text>
