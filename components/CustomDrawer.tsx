@@ -82,7 +82,7 @@ export default function CustomDrawer() {
         {/* Itens do perfil */}
         <MenuItem label="Meu perfil" />
         <Divider />
-        <MenuItem label="Meus pets" onPress={() => router.push('/')} />
+        <MenuItem label="Meus pets" onPress={() => router.push('/(app)/meusPets')} />
         <Divider />
         <MenuItem label="Favoritos" />
         <Divider />
