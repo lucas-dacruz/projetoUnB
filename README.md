@@ -1,50 +1,43 @@
-# Welcome to your Expo app 👋
+# Meau - Adoção e Ajuda Animal 🐾 
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Projeto desenvolvido para a disciplina de **Desenvolvimento de Aplicativos** na **Universidade de Brasília (UnB)**.  O **Meau** é uma plataforma voltada para facilitar o processo de adoção, apadrinhamento e auxílio a animais em situação de vulnerabilidade. 
 
-## Get started
+## 🚀 Tecnologias e Ferramentas 
+* **Framework:** [Expo](https://expo.dev) (React Native)
+* **Linguagem:** TypeScript
+* **Backend:** [Firebase](https://firebase.google.com/) (Firestore para banco de dados e Authentication para login)
+* **Navegação:** Expo Router (File-based routing)
+* **Estilização:** Componentes nativos do React Native
 
-1. Install dependencies
+## 📁 Estrutura do Projeto 
 
-   ```bash
-   npm install
-   ```
+* `/app`: Contém as rotas e telas do aplicativo (Home, Adotar, Perfil, etc).
+* `/components`: Componentes reutilizáveis (Menu Lateral, Botões personalizados).
+* `/assets`: Imagens, ícones e fontes do sistema.
+* `.env`: Variáveis de ambiente com chaves do Firebase (não incluído no repositório por segurança). 
+## Configuração e Execução
+1. Instalar dependências 
 
-2. Start the app
+   ```bash
+   npm install
+   ```
 
-   ```bash
-   npx expo start
-   ```
+2. Configurar Variáveis de Ambiente:
 
-In the output, you'll find options to open the app in a
+Crie um arquivo .env na raiz do projeto e adicione as credenciais do Firebase fornecidas pela equipe 
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+3. Iniciar o projeto
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+   ```bash
+   npx expo start
+   ```
 
-## Get a fresh project
 
-When you're ready, run:
+Use o app Expo Go no celular ou um emulador Android para visualizar. 
 
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Histórico de Contribuições
+Este projeto utiliza o Git para controle de versão e colaboração.
+    • O gráfico de rede (Network Graph) pode ser visualizado na aba Insights -> Network do GitHub, demonstrando a evolução das branches e merges realizados pela equipe.
+Integrantes
+    • Douglas Rocha de Oliveira
+    • Lucas Arruda da Cruz
