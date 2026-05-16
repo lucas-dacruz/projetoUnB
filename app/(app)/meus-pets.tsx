@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import AnimalCard from '@/components/animal-card';
+import { auth, db } from '@/firebaseConfig';
 import { useRouter } from 'expo-router';
-import { db, auth } from '@/firebaseConfig';
-import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
-import AnimalCard from '@/components/AnimalCard';
+import { collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function MeusPets() {
   const router = useRouter();

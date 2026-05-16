@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
-import { collection, addDoc } from 'firebase/firestore';
+import FormInput from '@/components/form-input';
+import ImageSelector from '@/components/image-selector';
 import { db } from '@/firebaseConfig';
-import ImageSelector from '@/components/ImageSelector';
-import FormInput from '@/components/FormInput';
+import { useRouter } from 'expo-router';
+import { addDoc, collection } from 'firebase/firestore';
+import React, { useState } from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 
 export default function RegistroAnimal() {

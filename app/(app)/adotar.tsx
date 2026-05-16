@@ -1,11 +1,11 @@
-import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import AnimalCard from '@/components/animal-card';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import { DrawerNavigationProp } from '@react-navigation/drawer';
-import { db } from '../../firebaseConfig'; 
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import AnimalCard from '@/components/AnimalCard';
+import React, { useCallback, useState } from 'react';
+import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { db } from '../../firebaseConfig';
 
 export default function ListaAnimais() {
   const router = useRouter();

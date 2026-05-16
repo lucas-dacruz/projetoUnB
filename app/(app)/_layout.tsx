@@ -1,5 +1,5 @@
 import { Drawer } from 'expo-router/drawer';
-import CustomDrawer from '../../components/CustomDrawer';
+import CustomDrawer from '../../components/custom-drawer';
 
 export default function DrawerLayout() {
   return (

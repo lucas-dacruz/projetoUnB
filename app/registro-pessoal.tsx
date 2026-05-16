@@ -1,18 +1,18 @@
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import FormInput from '@/components/form-input';
+import ImageSelector from '@/components/image-selector';
 import { db } from '@/firebaseConfig';
-import { collection, addDoc } from 'firebase/firestore';
+import { useRouter } from 'expo-router';
+import { addDoc, collection } from 'firebase/firestore';
+import React, { useState } from 'react';
 import {
-  Alert,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
+    Alert,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
-import ImageSelector from '@/components/ImageSelector';
-import FormInput from '@/components/FormInput';
 
 export default function CadastroPessoalForm() {
   const router = useRouter();

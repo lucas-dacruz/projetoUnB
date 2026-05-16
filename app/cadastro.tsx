@@ -1,7 +1,7 @@
-import { View, Text, StyleSheet } from 'react-native';
+import PrimaryButton from '@/components/primary-button';
+import ScreenHeader from '@/components/screen-header';
 import { useRouter } from 'expo-router';
-import PrimaryButton from '@/components/PrimaryButton';
-import ScreenHeader from '@/components/ScreenHeader';
+import { StyleSheet, Text, View } from 'react-native';
 
 export default function Cadastro() {
   const router = useRouter()
