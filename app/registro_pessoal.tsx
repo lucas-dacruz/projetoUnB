@@ -8,11 +8,11 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View
 } from 'react-native';
 import ImageSelector from '@/components/ImageSelector';
+import FormInput from '@/components/FormInput';
 
 export default function CadastroPessoalForm() {
   const router = useRouter();
@@ -48,23 +48,6 @@ export default function CadastroPessoalForm() {
 
     salvarUsuario();
   };
-
-  const ValidatedInput = (label: string, value: string, setter: (v: string) => void, placeholder: string, props = {}) => (
-    <View style={styles.inputWrapper}>
-      <Text style={styles.sectionLabelVerde}>{label}</Text>
-      <View style={styles.inputContainer}>
-        <TextInput 
-          style={styles.input} 
-          placeholder={placeholder} 
-          placeholderTextColor="#bdbdbd" 
-          value={value} 
-          onChangeText={setter}
-          {...props}
-        />
-        {value.length > 0 && <Text style={styles.checkIcon}>✓</Text>}
-      </View>
-    </View>
-  );
 
   const salvarUsuario = async () => {
     try {
@@ -105,18 +88,18 @@ export default function CadastroPessoalForm() {
         </View>
 
         <Text style={styles.groupTitle}>INFORMAÇÕES PESSOAIS</Text>
-        {ValidatedInput("NOME COMPLETO", nome, setNome, "Nome completo")}
-        {ValidatedInput("IDADE", idade, setIdade, "Idade", { keyboardType: "numeric" })}
-        {ValidatedInput("E-MAIL", email, setEmail, "E-mail", { keyboardType: "email-address" })}
-        {ValidatedInput("ESTADO", estado, setEstado, "Estado")}
-        {ValidatedInput("CIDADE", cidade, setCidade, "Cidade")}
-        {ValidatedInput("ENDEREÇO", endereco, setEndereco, "Endereço")}
-        {ValidatedInput("TELEFONE", telefone, setTelefone, "Telefone", { keyboardType: "phone-pad" })}
+        <FormInput label="NOME COMPLETO" value={nome} onChangeText={setNome} placeholder="Nome completo" />
+        <FormInput label="IDADE" value={idade} onChangeText={setIdade} placeholder="Idade" keyboardType="numeric" />
+        <FormInput label="E-MAIL" value={email} onChangeText={setEmail} placeholder="E-mail" keyboardType="email-address" />
+        <FormInput label="ESTADO" value={estado} onChangeText={setEstado} placeholder="Estado" />
+        <FormInput label="CIDADE" value={cidade} onChangeText={setCidade} placeholder="Cidade" />
+        <FormInput label="ENDEREÇO" value={endereco} onChangeText={setEndereco} placeholder="Endereço" />
+        <FormInput label="TELEFONE" value={telefone} onChangeText={setTelefone} placeholder="Telefone" keyboardType="phone-pad" />
 
         <Text style={styles.groupTitle}>INFORMAÇÕES DE PERFIL</Text>
-        {ValidatedInput("NOME DE USUÁRIO", usuario, setUsuario, "Nome de usuário")}
-        {ValidatedInput("SENHA", senha, setSenha, "Senha", { secureTextEntry: true })}
-        {ValidatedInput("CONFIRMAÇÃO DE SENHA", confirmarSenha, setConfirmarSenha, "Confirmação de senha", { secureTextEntry: true })}
+        <FormInput label="NOME DE USUÁRIO" value={usuario} onChangeText={setUsuario} placeholder="Nome de usuário" />
+        <FormInput label="SENHA" value={senha} onChangeText={setSenha} placeholder="Senha" secureTextEntry />
+        <FormInput label="CONFIRMAÇÃO DE SENHA" value={confirmarSenha} onChangeText={setConfirmarSenha} placeholder="Confirmação de senha" secureTextEntry />
 
         <Text style={styles.groupTitle}>FOTO DE PERFIL</Text>
         < ImageSelector imagem={imagemPerfil} setImagem={setImagemPerfil} />
@@ -138,11 +121,6 @@ const styles = StyleSheet.create({
   infoBanner: { backgroundColor: '#CFE9E5', padding: 15, borderRadius: 4, marginBottom: 20 },
   infoText: { fontSize: 14, color: '#434343', textAlign: 'center', lineHeight: 20 },
   groupTitle: { fontSize: 14, color: '#88C9BF', marginTop: 25, marginBottom: 10, fontWeight: '500' },
-  inputWrapper: { marginBottom: 15 },
-  sectionLabelVerde: { fontSize: 12, color: '#88C9BF', marginBottom: 4 },
-  inputContainer: { flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: '#bdbdbd' },
-  input: { flex: 1, paddingVertical: 8, fontSize: 14, color: '#434343' },
-  checkIcon: { color: '#88C9BF', fontSize: 18, fontWeight: 'bold', marginLeft: 5 },
   photoBox: { backgroundColor: '#F1F2F2', height: 120, justifyContent: 'center', alignItems: 'center', marginBottom: 30 },
   plus: { fontSize: 24, color: '#757575' },
   photoText: { fontSize: 14, color: '#757575' },

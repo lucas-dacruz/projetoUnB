@@ -1,11 +1,11 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import { useNavigation } from '@react-navigation/native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { db } from '../../firebaseConfig'; 
 import { collection, getDocs, query, where } from 'firebase/firestore';
+import AnimalCard from '@/components/AnimalCard';
 
 export default function ListaAnimais() {
   const router = useRouter();
@@ -40,38 +40,11 @@ export default function ListaAnimais() {
   );
 
   const renderItem = ({ item }: { item: any }) => (
-    <TouchableOpacity 
-      style={styles.card}
+    <AnimalCard
+      animal={item}
       onPress={() => router.push({ pathname: '/detalhes_animal', params: { id: item.id } })}
-    >
-      <View style={styles.cardHeader}>
-        <Text style={styles.animalName}>{item.nome}</Text>
-      </View>
-      
-      {item.imagemBase64 ? (
-        <Image 
-          source={{ 
-            uri: item.imagemBase64.startsWith('data:image') 
-              ? item.imagemBase64 
-              : `data:image/jpeg;base64,${item.imagemBase64}` 
-          }} 
-          style={styles.animalImage} 
-        />
-      ) : (
-        <View style={styles.imagePlaceholder}>
-          <Text>Sem foto</Text>
-        </View>
-      )}
-
-      <View style={styles.cardFooter}>
-        <Text style={styles.animalDetails}>
-          {(item.sexo || '').toUpperCase()} | {(item.porte || '').toUpperCase()} | {(item.idade || '').toUpperCase()}
-        </Text>
-        <Text style={styles.animalLocation}>BRASÍLIA - DF</Text>
-      </View>
-    </TouchableOpacity>
+    />
   );
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -115,12 +88,4 @@ const styles = StyleSheet.create({
   titleHeader: { fontSize: 18, color: '#434343', fontWeight: '500', paddingBottom: 5 },
   backIcon: { fontSize: 28, color: '#434343' },
   listContent: { padding: 8 },
-  card: { backgroundColor: '#fff', marginBottom: 12, borderRadius: 4, elevation: 2, overflow: 'hidden' },
-  cardHeader: { backgroundColor: '#cfe9e5', padding: 8 },
-  animalName: { fontSize: 16, color: '#434343', fontWeight: 'bold' },
-  animalImage: { width: '100%', height: 180 },
-  imagePlaceholder: { width: '100%', height: 180, backgroundColor: '#eee', justifyContent: 'center', alignItems: 'center' },
-  cardFooter: { padding: 8, alignItems: 'center' },
-  animalDetails: { fontSize: 12, color: '#434343' },
-  animalLocation: { fontSize: 12, color: '#434343', marginTop: 2 }
 });

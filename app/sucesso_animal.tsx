@@ -1,18 +1,22 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
+import PrimaryButton from '@/components/PrimaryButton';
+import ScreenHeader from '@/components/ScreenHeader';
 
 export default function SucessoAnimal() {
   const router = useRouter();
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.replace('/home')}>
-          <Text style={styles.backIcon}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.titleHeader}>Cadastro do Animal</Text>
-      </View>
+      <ScreenHeader
+        title="Cadastro do Animal"
+        leftText="←"
+        onLeftPress={() => router.replace('/home')}
+        style={styles.header}
+        leftTextStyle={styles.backIcon}
+        titleStyle={styles.titleHeader}
+      />
 
       <View style={styles.content}>
         <Text style={styles.ebaText}>Eba!</Text>
@@ -25,12 +29,12 @@ export default function SucessoAnimal() {
           Certifique-se que permitiu o envio de notificações por push no campo privacidade do menu configurações do aplicativo. Assim, poderemos te avisar assim que alguém interessado entrar em contato!
         </Text>
 
-        <TouchableOpacity 
-          style={styles.button} 
+        <PrimaryButton
+          title="MEUS PETS"
+          style={styles.button}
+          textStyle={styles.buttonText}
           onPress={() => router.replace('/home')}
-        >
-          <Text style={styles.buttonText}>MEUS PETS</Text>
-        </TouchableOpacity>
+        />
       </View>
     </View>
   );
@@ -38,14 +42,7 @@ export default function SucessoAnimal() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
-  header: { 
-    backgroundColor: '#CFE9E5', 
-    height: 90, 
-    flexDirection: 'row', 
-    alignItems: 'flex-end', 
-    paddingHorizontal: 20, 
-    paddingBottom: 15 
-  },
+  header: { backgroundColor: '#CFE9E5', paddingBottom: 15 },
   backIcon: { fontSize: 24, color: '#434343', marginRight: 20 },
   titleHeader: { fontSize: 20, color: '#434343', fontWeight: '500' },
   

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
 import ImageSelector from '@/components/ImageSelector';
+import FormInput from '@/components/FormInput';
 
 
 export default function RegistroAnimal() {
@@ -114,8 +115,7 @@ export default function RegistroAnimal() {
               {abaAtiva === 'ADOCAO' ? 'Adoção' : abaAtiva === 'APADRINHAR' ? 'Apadrinhar' : 'Ajudar'}
             </Text>
 
-            <Text style={styles.sectionLabelVerde}>NOME DO ANIMAL</Text>
-            <TextInput style={styles.input} placeholder="Nome do animal" placeholderTextColor="#bdbdbd" value={nome} onChangeText={setNome} />
+            <FormInput label="NOME DO ANIMAL" value={nome} onChangeText={setNome} placeholder="Nome do animal" showCheck={false} />
 
             <Text style={styles.sectionLabelVerde}>FOTOS DO ANIMAL</Text>
             <ImageSelector imagem={imagem} setImagem={setImagem} />
@@ -151,7 +151,7 @@ export default function RegistroAnimal() {
               {renderCheck("VACINADO")}{renderCheck("VERMIFUGADO")}
               {renderCheck("CASTRADO")}{renderCheck("DOENTE")}
             </View>
-            <TextInput style={styles.input} placeholder="Doenças do animal" placeholderTextColor="#bdbdbd" value={doencas} onChangeText={setDoencas} />
+            <FormInput label="" value={doencas} onChangeText={setDoencas} placeholder="Doenças do animal" showCheck={false} />
 
             {abaAtiva === 'ADOCAO' && (
               <View>
@@ -194,22 +194,24 @@ export default function RegistroAnimal() {
                   {renderCheck("AUXÍLIO FINANCEIRO")}
                   {renderCheck("MEDICAMENTO")}
                   {selecoes.includes("MEDICAMENTO") && (
-                    <TextInput style={styles.input} placeholder="Nome do medicamento" placeholderTextColor="#bdbdbd" value={nomeMedicamento} onChangeText={setNomeMedicamento} />
+                    <FormInput label="" value={nomeMedicamento} onChangeText={setNomeMedicamento} placeholder="Nome do medicamento" showCheck={false} />
                   )}
                   {renderCheck("OBJETOS")}
                   {selecoes.includes("OBJETOS") && (
-                    <TextInput style={styles.input} placeholder="Especifique o(s) objeto(s)" placeholderTextColor="#bdbdbd" value={especificacaoObjetos} onChangeText={setEspecificacaoObjetos} />
+                    <FormInput label="" value={especificacaoObjetos} onChangeText={setEspecificacaoObjetos} placeholder="Especifique o(s) objeto(s)" showCheck={false} />
                   )}
                 </View>
               </View>
             )}
 
-            <Text style={styles.sectionLabelVerde}>SOBRE O ANIMAL</Text>
-            <TextInput 
-              style={[styles.input, { height: 80, textAlignVertical: 'top' }]} 
-              placeholder="Compartilhe a história do animal" 
-              placeholderTextColor="#bdbdbd"
-              multiline value={sobre} onChangeText={setSobre} 
+            <FormInput
+              label="SOBRE O ANIMAL"
+              value={sobre}
+              onChangeText={setSobre}
+              placeholder="Compartilhe a história do animal"
+              multiline
+              showCheck={false}
+              style={{ height: 80, textAlignVertical: 'top' }}
             />
 
             <TouchableOpacity 
@@ -242,7 +244,6 @@ const styles = StyleSheet.create({
   dynamicContent: { marginTop: 10 },
   activeLabel: { fontSize: 16, color: '#434343', fontWeight: '500', marginBottom: 10 },
   sectionLabelVerde: { fontSize: 12, color: '#88C9BF', marginTop: 15, marginBottom: 8, fontWeight: '500' },
-  input: { borderBottomWidth: 1, borderBottomColor: '#bdbdbd', paddingVertical: 5, fontSize: 14, color: '#434343', marginBottom: 10 },
   photoBox: { backgroundColor: '#F1F2F2', height: 120, justifyContent: 'center', alignItems: 'center', marginBottom: 10 },
   plus: { fontSize: 24, color: '#757575' },
   photoText: { fontSize: 14, color: '#757575' },

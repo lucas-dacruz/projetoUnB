@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import { db, auth } from '@/firebaseConfig'; 
+import { db, auth } from '@/firebaseConfig';
 import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
+import AnimalCard from '@/components/AnimalCard';
 
 export default function MeusPets() {
   const router = useRouter();
@@ -42,50 +43,26 @@ export default function MeusPets() {
   };
 
   const renderItem = ({ item }: { item: any }) => (
-    <View style={[styles.card, !item.disponivel && styles.cardOculto]}>
-
-      <TouchableOpacity
+    <View style={!item.disponivel && styles.cardOculto}>
+      <AnimalCard
+        animal={item}
         onPress={() => router.push({ pathname: '/detalhes_animal', params: { id: item.id } })}
-      >
-        <View style={styles.cardHeader}>
-          <Text style={styles.animalName}>{item.nome}</Text>
+        headerRight={
           <View style={[styles.badge, item.disponivel ? styles.badgeVisivel : styles.badgeOculto]}>
             <Text style={styles.badgeText}>{item.disponivel ? 'Visível' : 'Oculto'}</Text>
           </View>
-        </View>
-
-        {item.imagemBase64 ? (
-          <Image 
-            source={{ 
-              uri: item.imagemBase64.startsWith('data:image') 
-                ? item.imagemBase64 
-                : `data:image/jpeg;base64,${item.imagemBase64}` 
-            }} 
-            style={styles.animalImage} 
-          />
-        ) : (
-          <View style={styles.imagePlaceholder}>
-            <Text style={styles.placeholderText}>Sem foto</Text>
-          </View>
-        )}
-
-        <View style={styles.cardInfo}>
-          <Text style={styles.animalDetails}>
-            {(item.sexo || '').toUpperCase()} | {(item.porte || '').toUpperCase()} | {(item.idade || '').toUpperCase()}
-          </Text>
-          <Text style={styles.animalLocation}>BRASÍLIA - DF</Text>
-        </View>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[styles.toggleBtn, item.disponivel ? styles.toggleBtnVisivel : styles.toggleBtnOculto]}
-        onPress={() => toggleDisponivel(item.id, item.disponivel)}
-      >
-        <Text style={styles.toggleBtnText}>
-          {item.disponivel ? '🙈 Ocultar da adoção' : '👁️ Mostrar na adoção'}
-        </Text>
-      </TouchableOpacity>
-
+        }
+        footer={
+          <TouchableOpacity
+            style={[styles.toggleBtn, item.disponivel ? styles.toggleBtnVisivel : styles.toggleBtnOculto]}
+            onPress={() => toggleDisponivel(item.id, item.disponivel)}
+          >
+            <Text style={styles.toggleBtnText}>
+              {item.disponivel ? '🙈 Ocultar da adoção' : '👁️ Mostrar na adoção'}
+            </Text>
+          </TouchableOpacity>
+        }
+      />
     </View>
   );
 
@@ -107,10 +84,10 @@ export default function MeusPets() {
         </TouchableOpacity>
       </View>
 
-      <FlatList 
-        data={pets} 
-        keyExtractor={(item) => item.id} 
-        renderItem={renderItem} 
+      <FlatList
+        data={pets}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={
           <View style={styles.containerCentro}>
@@ -124,13 +101,13 @@ export default function MeusPets() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fafafa' },
-  header: { 
-    backgroundColor: '#88c9bf', 
-    height: 90, 
-    flexDirection: 'row', 
-    alignItems: 'flex-end', 
-    justifyContent: 'space-between', 
-    paddingHorizontal: 16, 
+  header: {
+    backgroundColor: '#88c9bf',
+    height: 90,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
     paddingBottom: 15,
     elevation: 3
   },
@@ -138,16 +115,7 @@ const styles = StyleSheet.create({
   backIcon: { fontSize: 28, color: '#434343' },
   containerCentro: { flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 50 },
   listContent: { padding: 8 },
-  card: { backgroundColor: '#fff', marginBottom: 12, borderRadius: 4, elevation: 2, overflow: 'hidden' },
   cardOculto: { opacity: 0.5 },
-  cardHeader: { backgroundColor: '#cfe9e5', padding: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  animalName: { fontSize: 16, color: '#434343', fontWeight: 'bold' },
-  animalImage: { width: '100%', height: 180 },
-  imagePlaceholder: { width: '100%', height: 180, backgroundColor: '#eee', justifyContent: 'center', alignItems: 'center' },
-  placeholderText: { color: '#757575' },
-  cardInfo: { padding: 8, alignItems: 'center' },
-  animalDetails: { fontSize: 12, color: '#434343' },
-  animalLocation: { fontSize: 12, color: '#434343', marginTop: 2 },
   msgVazio: { fontSize: 16, color: '#bdbdbd', textAlign: 'center' },
   badge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 10 },
   badgeVisivel: { backgroundColor: '#c8f0c8' },

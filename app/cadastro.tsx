@@ -1,5 +1,7 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
+import PrimaryButton from '@/components/PrimaryButton';
+import ScreenHeader from '@/components/ScreenHeader';
 
 export default function Cadastro() {
   const router = useRouter()
@@ -7,12 +9,14 @@ export default function Cadastro() {
   return (
     <View style={styles.container}>
 
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.replace('/')}>
-          <Text style={styles.back}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.titleHeader}>Cadastro</Text>
-      </View>
+      <ScreenHeader
+        title="Cadastro"
+        leftText="←"
+        onLeftPress={() => router.replace('/')}
+        style={styles.header}
+        leftTextStyle={styles.back}
+        titleStyle={styles.titleHeader}
+      />
 
       <View style={styles.content}>
         <Text style={styles.title}>Ops!</Text>
@@ -21,20 +25,23 @@ export default function Cadastro() {
           Você não pode realizar esta ação sem possuir um cadastro.
         </Text>
 
-        <TouchableOpacity 
-          style={styles.button} 
+        <PrimaryButton
+          title="FAZER CADASTRO"
+          style={styles.button}
+          textStyle={styles.buttonText}
           onPress={() => router.push('/registro_pessoal' as any)}
-        >
-          <Text style={styles.buttonText}>FAZER CADASTRO</Text>
-        </TouchableOpacity>
+        />
 
         <Text style={styles.loginText}>
           Já possui cadastro?
         </Text>
 
-        <TouchableOpacity style={styles.button} onPress={() => router.push('/')}>
-          <Text style={styles.buttonText}>FAZER LOGIN</Text>
-        </TouchableOpacity>
+        <PrimaryButton
+          title="FAZER LOGIN"
+          style={styles.button}
+          textStyle={styles.buttonText}
+          onPress={() => router.push('/')}
+        />
       </View>
 
     </View>
@@ -49,10 +56,6 @@ const styles = StyleSheet.create({
 
   header: {
     backgroundColor: '#A8DAD6',
-    height: 90,
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    paddingHorizontal: 20,
     paddingBottom: 10,
   },
 
