@@ -8,6 +8,7 @@ import {
   Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useAuth } from '../context/auth-context';
 
 function Icon({ name }: { name: string }) {
   const icons: Record<string, string> = {
@@ -61,6 +62,17 @@ export default function CustomDrawer() {
   const [atalhos, setAtalhos] = useState(true);
   const [informacoes, setInformacoes] = useState(true);
   const [configuracoes, setConfiguracoes] = useState(true);
+  const { user } = useAuth();
+  const { logout } = useAuth();
+
+  function goIfLogged(route: string) {
+    if (!user) {
+      router.push('/(auth)/login');
+      return;
+    }
+
+    router.push(route as any);
+  }
 
   return (
     <View style={styles.container}>
@@ -72,14 +84,16 @@ export default function CustomDrawer() {
             style={styles.avatar}
           />
           <View style={styles.headerBottom}>
-            <Text style={styles.userName}>Emille Catarine</Text>
+            <Text style={styles.userName}>
+              {user ? user.nome : 'Visitante'}
+            </Text>
             <Text style={styles.expandIcon}>▾</Text>
           </View>
         </View>
 
         <MenuItem label="Meu perfil" />
         <Divider />
-        <MenuItem label="Meus pets" onPress={() => router.push('/(app)/meus_pets')} />
+        <MenuItem label="Meus pets" onPress={() => goIfLogged('/(app)/meus_pets')} />
         <Divider />
         <MenuItem label="Favoritos" />
         <Divider />
@@ -94,7 +108,7 @@ export default function CustomDrawer() {
         />
         {atalhos && (
           <>
-            <MenuItem label="Cadastrar um pet" onPress={() => router.push('/(app)/home')} />
+            <MenuItem label="Cadastrar um pet" onPress={() => router.push('/(app)/registro-animal')} />
             <Divider />
             <MenuItem label="Adotar um pet" onPress={() => router.push('/adotar')}/>
             <Divider />
@@ -142,7 +156,10 @@ export default function CustomDrawer() {
 
       <TouchableOpacity
         style={styles.logoutButton}
-        onPress={() => router.replace('/')}
+        onPress={() => {
+          logout();
+          router.replace('/');
+        }}
       >
         <Text style={styles.logoutText}>Sair</Text>
       </TouchableOpacity>
