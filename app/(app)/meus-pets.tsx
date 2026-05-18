@@ -46,7 +46,7 @@ export default function MeusPets() {
     <View style={!item.disponivel && styles.cardOculto}>
       <AnimalCard
         animal={item}
-        onPress={() => router.push({ pathname: '/detalhes_animal', params: { id: item.id } })}
+        onPress={() => router.push({ pathname: '/detalhes-animal', params: { id: item.id } })}
         headerRight={
           <View style={[styles.badge, item.disponivel ? styles.badgeVisivel : styles.badgeOculto]}>
             <Text style={styles.badgeText}>{item.disponivel ? 'Visível' : 'Oculto'}</Text>

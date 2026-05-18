@@ -31,7 +31,7 @@ export default function Home() {
         <CustomButton text="AJUDAR" />
         <CustomButton 
           text="CADASTRAR ANIMAL"
-          onPress={() => router.push('../registro_animal')}
+          onPress={() => router.push('../registro-animal')}
         />
       </View>
 

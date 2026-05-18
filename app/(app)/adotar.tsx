@@ -42,7 +42,7 @@ export default function ListaAnimais() {
   const renderItem = ({ item }: { item: any }) => (
     <AnimalCard
       animal={item}
-      onPress={() => router.push({ pathname: '/detalhes_animal', params: { id: item.id } })}
+      onPress={() => router.push({ pathname: '/detalhes-animal', params: { id: item.id } })}
     />
   );
   return (

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,13 @@ import {
   Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { auth, db } from '@/firebaseConfig';
+import { doc, getDoc } from 'firebase/firestore';
+
+type UsuarioPerfil = {
+  nome?: string;
+  imagemBase64?: string | null;
+};
 
 function Icon({ name }: { name: string }) {
   const icons: Record<string, string> = {
@@ -61,25 +68,58 @@ export default function CustomDrawer() {
   const [atalhos, setAtalhos] = useState(true);
   const [informacoes, setInformacoes] = useState(true);
   const [configuracoes, setConfiguracoes] = useState(true);
+  const [perfil, setPerfil] = useState<UsuarioPerfil | null>(null);
+
+  useEffect(() => {
+    const carregarPerfil = async () => {
+      const user = auth.currentUser;
+
+      if (!user) {
+        return;
+      }
+
+      try {
+        const docRef = doc(db, 'usuarios', user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setPerfil(docSnap.data() as UsuarioPerfil);
+        }
+      } catch (error) {
+        console.log('Erro ao carregar perfil do usuário:', error);
+      }
+    };
+
+    carregarPerfil();
+  }, []);
+
+  const nomeUsuario = perfil?.nome || auth.currentUser?.email || 'Usuário';
+  const imagemPerfil = perfil?.imagemBase64;
 
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
 
         <View style={styles.header}>
-          <Image
-            source={{ uri: 'https://i.pravatar.cc/64' }}
-            style={styles.avatar}
-          />
+          {imagemPerfil ? (
+            <Image
+              source={{ uri: imagemPerfil }}
+              style={styles.avatar}
+            />
+          ) : (
+            <View style={[styles.avatar, styles.avatarFallback]}>
+              <Text style={styles.avatarInitial}>{nomeUsuario.charAt(0).toUpperCase()}</Text>
+            </View>
+          )}
           <View style={styles.headerBottom}>
-            <Text style={styles.userName}>Emille Catarine</Text>
+            <Text style={styles.userName}>{nomeUsuario}</Text>
             <Text style={styles.expandIcon}>▾</Text>
           </View>
         </View>
 
         <MenuItem label="Meu perfil" />
         <Divider />
-        <MenuItem label="Meus pets" onPress={() => router.push('/(app)/meus_pets')} />
+        <MenuItem label="Meus pets" onPress={() => router.push('/(app)/meus-pets')} />
         <Divider />
         <MenuItem label="Favoritos" />
         <Divider />
@@ -173,6 +213,18 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
+  },
+
+  avatarFallback: {
+    backgroundColor: '#cfe9e5',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  avatarInitial: {
+    fontFamily: 'Roboto_700Bold',
+    fontSize: 24,
+    color: '#434343',
   },
 
   headerBottom: {
