@@ -13,5 +13,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-  ]
+, ".vscode/_layout.tsx", ".vscode/adotar.tsx", ".vscode/detalhes-animal.tsx", "app/(app)/meus-pets.tsx", "app/(app)/registro-animal.tsx", "app/(app)/sucesso-animal.tsx"  ]
 }

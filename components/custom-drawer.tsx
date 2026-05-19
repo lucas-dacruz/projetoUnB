@@ -134,7 +134,7 @@ export default function CustomDrawer() {
         />
         {atalhos && (
           <>
-            <MenuItem label="Cadastrar um pet" onPress={() => router.push('/(app)/home')} />
+            <MenuItem label="Cadastrar um pet" onPress={() => router.push('/(app)/registro-animal')} />
             <Divider />
             <MenuItem label="Adotar um pet" onPress={() => router.push('/adotar')}/>
             <Divider />
@@ -182,7 +182,10 @@ export default function CustomDrawer() {
 
       <TouchableOpacity
         style={styles.logoutButton}
-        onPress={() => router.replace('/')}
+        onPress={() => {
+          logout();
+          router.replace('/');
+        }}
       >
         <Text style={styles.logoutText}>Sair</Text>
       </TouchableOpacity>

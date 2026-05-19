@@ -1,148 +1,126 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { useState } from 'react';
 import { useRouter } from 'expo-router';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebaseConfig';
+import { useNavigation } from '@react-navigation/native';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function Home() {
   const router = useRouter();
-
-  const handleLogin = async () => {
-    if (!email || !password) {
-      alert('Preencha email e senha');
-      return;
-    }
-
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      router.replace('/(app)/home');
-    } catch (error: any) {
-      router.push('/cadastro');
-    }
-  };
+  const navigation = useNavigation<DrawerNavigationProp<{}>>();
 
   return (
     <View style={styles.container}>
 
-      <View style={styles.header}>
-        <Text style={styles.menu}>≡</Text>
-        <Text style={styles.title}>Login</Text>
+      <TouchableOpacity style={styles.menu} onPress={() => navigation.openDrawer()}>
+        <View style={styles.line} />
+        <View style={styles.line} />
+        <View style={styles.line} />
+      </TouchableOpacity>
+
+      <Text style={styles.title}>Olá!</Text>
+
+      <Text style={styles.subtitle}>
+        Bem vindo ao Meau!{"\n"}
+        Aqui você pode adotar, doar e ajudar{"\n"}
+        cães e gatos com facilidade.{"\n"}
+        Qual o seu interesse?
+      </Text>
+
+      <View style={styles.buttonsContainer}>
+        <CustomButton text="ADOTAR" 
+        onPress={() => router.push('/adotar' as any)}/>
+        <CustomButton 
+          text="CADASTRAR ANIMAL"
+          onPress={() => router.push('../registro-animal')}/>
       </View>
 
-      <View style={styles.form}>
-        <TextInput
-          placeholder="Email"
-          placeholderTextColor="#BDBDBD"
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-        />
+      <TouchableOpacity onPress={() => router.push('/login')}>
+        <Text style={styles.login}>login</Text>
+      </TouchableOpacity>
 
-        <TextInput
-          placeholder="Senha"
-          placeholderTextColor="#BDBDBD"
-          secureTextEntry
-          style={styles.input}
-          value={password}
-          onChangeText={setPassword}
-        />
-      </View>
-
-      <View style={styles.buttonGroup}>
-        <TouchableOpacity style={styles.primaryButton} onPress={handleLogin}>
-          <Text style={styles.primaryText}>ENTRAR</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.facebookButton}>
-          <Text style={styles.socialText}>ENTRAR COM FACEBOOK</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.googleButton}>
-          <Text style={styles.socialText}>ENTRAR COM GOOGLE</Text>
-        </TouchableOpacity>
-      </View>
+      <Text style={styles.logo}>meaü</Text>
 
     </View>
+  );
+}
+
+function CustomButton({ text, onPress }: { text: string; onPress?: () => void }) {
+  return (
+    <TouchableOpacity style={styles.button} onPress={onPress}>
+      <Text style={styles.buttonText}>{text}</Text>
+    </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-
-  header: {
-    backgroundColor: '#A8DAD6',
-    height: 90,
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    paddingHorizontal: 20,
-    paddingBottom: 10,
+    backgroundColor: '#F2F2F2',
+    alignItems: 'center',
   },
 
   menu: {
-    fontSize: 28,
-    marginRight: 20,
+    position: 'absolute',
+    top: 60,
+    left: 30,
+  },
+
+  line: {
+    width: 25,
+    height: 6,
+    backgroundColor: '#6FCF97',
+    marginVertical: 2,
   },
 
   title: {
-    fontSize: 24,
-    fontFamily: 'Roboto_700Bold',
-    color: '#434343',
+    marginTop: 100,
+    fontSize: 52,
+    fontFamily: 'Courgette_400Regular',
+    color: '#F2C94C',
   },
 
-  form: {
-    marginTop: 60,
-    paddingHorizontal: 20,
+  subtitle: {
+    marginTop: 30,
+    textAlign: 'center',
+    color: '#7A7A7A',
+    fontSize: 16,
+    lineHeight: 22,
+    width: '100%',
   },
 
-  input: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#BDBDBD',
-    marginBottom: 30,
-    paddingVertical: 10,
-    fontFamily: 'Roboto_400Regular',
-  },
-
-  buttonGroup: {
-    marginTop: 80,
-    alignItems: 'center',
-  },
-
-  primaryButton: {
-    backgroundColor: '#88C9BF',
+  buttonsContainer: {
+    marginTop: 50,
     width: '80%',
-    padding: 15,
+    gap: 15,
+  },
+
+  button: {
+    backgroundColor: '#F2C94C',
+    height: 50,
+    borderRadius: 6,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 30,
     elevation: 3,
   },
 
-  primaryText: {
-    fontFamily: 'Roboto_700Bold',
-    color: '#434343',
+  buttonText: {
+    fontWeight: 'bold',
+    color: '#333',
   },
 
-  facebookButton: {
-    backgroundColor: '#3b5998',
-    width: '80%',
-    padding: 15,
-    alignItems: 'center',
-    marginBottom: 15,
+  login: {
+    marginTop: 30,
+    color: '#6FCF97',
+    fontSize: 16,
+    width: '100%',
+    textAlign: 'center',
   },
 
-  googleButton: {
-    backgroundColor: '#EA4335',
-    width: '80%',
-    padding: 15,
-    alignItems: 'center',
-  },
-
-  socialText: {
-    color: '#fff',
-    fontFamily: 'Roboto_700Bold',
+  logo: {
+    position: 'absolute',
+    bottom: 40,
+    fontSize: 36,
+    color: '#6FCF97',
+    fontFamily: 'Courgette_400Regular',
+    transform: 'rotate(-20deg)'
   },
 });
