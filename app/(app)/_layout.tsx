@@ -1,7 +1,7 @@
 import { Slot, useRouter } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
-import CustomDrawer from '../components/custom-drawer';
-import { useAuth } from '../context/auth-context';
+import CustomDrawer from '@/components/custom-drawer';
+import { useAuth } from '@/context/auth-context';
 import { useEffect } from 'react';
 
 export default function DrawerLayout() {
