@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler'
 import { useRouter } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
