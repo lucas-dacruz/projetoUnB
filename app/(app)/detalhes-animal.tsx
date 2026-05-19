@@ -1,15 +1,8 @@
-<<<<<<< HEAD
-import { useLocalSearchParams, useRouter } from 'expo-router';
-=======
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { auth, db } from '../../firebaseConfig'; 
->>>>>>> master
+import { auth, db } from '@/firebaseConfig'; 
 import { doc, getDoc } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { db } from '../firebaseConfig';
 
 export default function DetalhesAnimal() {
   const router = useRouter();
