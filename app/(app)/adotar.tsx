@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { useCallback, useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { db } from '../firebaseConfig';
+import { db } from '@/firebaseConfig';
 
 export default function ListaAnimais() {
   const router = useRouter();
