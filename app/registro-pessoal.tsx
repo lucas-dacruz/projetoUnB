@@ -1,8 +1,9 @@
 import FormInput from '@/components/form-input';
 import ImageSelector from '@/components/image-selector';
-import { db } from '@/firebaseConfig';
+import { auth, db } from '@/firebaseConfig';
 import { useRouter } from 'expo-router';
-import { addDoc, collection } from 'firebase/firestore';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 import React, { useState } from 'react';
 import {
     Alert,
@@ -51,7 +52,11 @@ export default function CadastroPessoalForm() {
 
   const salvarUsuario = async () => {
     try {
-      await addDoc(collection(db, 'usuario'), {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+      const uid = userCredential.user.uid;
+
+      await setDoc(doc(db, 'usuarios', uid), {
+        uid,
         nome,
         idade,
         email,
@@ -61,7 +66,7 @@ export default function CadastroPessoalForm() {
         telefone,
         usuario,
         imagemBase64: imagemPerfil,
-        senha
+        criadoEm: new Date()
       });
 
       router.push('/');

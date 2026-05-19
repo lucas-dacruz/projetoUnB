@@ -1,6 +1,6 @@
 import FormInput from '@/components/form-input';
 import ImageSelector from '@/components/image-selector';
-import { db } from '@/firebaseConfig';
+import { auth, db } from '@/firebaseConfig';
 import { useRouter } from 'expo-router';
 import { addDoc, collection } from 'firebase/firestore';
 import React, { useState } from 'react';
@@ -50,7 +50,15 @@ export default function RegistroAnimal() {
 
   const salvarAnimal = async () => {
     try {
+      const user = auth.currentUser;
+
+      if (!user) {
+        alert('Você precisa estar logado para cadastrar um animal.');
+        return;
+      }
+
       await addDoc(collection(db, 'animais'), {
+        ownerId: user.uid,
         nome,
         especie,
         sexo,
@@ -67,7 +75,7 @@ export default function RegistroAnimal() {
         disponivel: true
       });
 
-      router.push('./sucesso_animal');
+      router.push('./sucesso-animal');
     } catch (error) {
       console.log(error);
       alert('Erro ao salvar!');
