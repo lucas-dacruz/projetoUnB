@@ -6,8 +6,6 @@ import { Roboto_400Regular, Roboto_700Bold } from "@expo-google-fonts/roboto"
 
 import { AuthProvider } from '../context/auth-context';
 
-// realizando teste
-
 export default function Layout() {
     const [fontsLoaded] = useFonts({
         Courgette_400Regular,
