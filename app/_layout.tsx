@@ -6,6 +6,8 @@ import { Roboto_400Regular, Roboto_700Bold } from "@expo-google-fonts/roboto"
 
 import { AuthProvider } from '../context/auth-context';
 
+//Apenas um texto para testar o jira
+
 export default function Layout() {
     const [fontsLoaded] = useFonts({
         Courgette_400Regular,
