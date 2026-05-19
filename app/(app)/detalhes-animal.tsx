@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { db } from '../../firebaseConfig'; 
+import { auth, db } from '../../firebaseConfig'; 
 import { doc, getDoc } from 'firebase/firestore';
 
 export default function DetalhesAnimal() {
@@ -108,9 +108,38 @@ export default function DetalhesAnimal() {
 
           <TouchableOpacity 
             style={styles.buttonVoltar} 
-            onPress={() => router.replace('/home')}
+            onPress={() => {
+              if (!animal) return;
+
+              const user = auth.currentUser;
+
+              if (!user) {
+                Alert.alert('Login necessário', 'Você precisa estar logado para iniciar uma conversa.');
+                return;
+              }
+
+              if (!animal.ownerId) {
+                Alert.alert('Erro', 'Este pet não possui dono associado.');
+                return;
+              }
+
+              if (user.uid === animal.ownerId) {
+                Alert.alert('Ação não permitida', 'Você não pode adotar seu próprio pet.');
+                return;
+              }
+              
+              // Redireciona para o chat passando os dados do animal e do dono via query params
+              router.push({
+                pathname: '/(app)/chat',
+                params: { 
+                  animalId: params.id,       // ID do documento do animal (ex: FCUa9P8Dhqr7r4FJW6PR)
+                  ownerId: animal.ownerId,    // ID do dono cadastrado no pet (ex: xxhgvBNLzlhoaLynRD7M3c2nWJp1)
+                  animalNome: animal.nome
+                }
+              });
+            }}
           >
-            <Text style={styles.buttonText}>VOLTAR PARA HOME</Text>
+            <Text style={styles.buttonText}>PRETENDO ADOTAR</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
