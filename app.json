@@ -20,7 +20,12 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.tonhaoturbina.projetoUnB"
+      "package": "com.tonhaoturbina.projetoUnB",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDvj98fkMKB6M5UoCc_oKqYAu3WieerGQ4"
+        }
+      }
     },
     "web": {
       "output": "static",

@@ -106,6 +106,13 @@ export default function DetalhesAnimal() {
           <Text style={styles.labelVerde}>MAIS SOBRE {animal.nome?.toUpperCase()}</Text>
           <Text style={styles.description}>{animal.sobre || "Sem descrição."}</Text>
 
+          <TouchableOpacity
+            style={styles.buttonMapa}
+            onPress={() => router.push({ pathname: './mapa', params: { id: params.id as string } })}
+          >
+            <Text style={styles.buttonText}>VER NO MAPA</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity 
             style={styles.buttonVoltar} 
             onPress={() => {
@@ -166,6 +173,7 @@ const styles = StyleSheet.create({
   valueText: { fontSize: 14, color: '#757575' },
   divider: { height: 1, backgroundColor: '#e0e0e0', marginVertical: 16 },
   description: { fontSize: 14, color: '#757575', lineHeight: 20, marginBottom: 20 },
+  buttonMapa: { backgroundColor: '#F2C94C', height: 40, width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 10, elevation: 2 },
   buttonVoltar: { backgroundColor: '#88c9bf', height: 40, width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 20, marginBottom: 40, elevation: 2 },
   buttonText: { color: '#434343', fontSize: 12, fontWeight: 'bold' }
 });
