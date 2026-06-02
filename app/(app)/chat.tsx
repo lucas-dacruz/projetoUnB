@@ -4,6 +4,9 @@ import { addDoc, collection, doc, onSnapshot, orderBy, query, serverTimestamp, s
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { GiftedChat, IMessage } from 'react-native-gifted-chat';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+const CHAT_HEADER_HEIGHT = 90;
 
 type ChatResumo = {
   id: string;
@@ -18,6 +21,7 @@ type ChatResumo = {
 export default function TelaChat() {
   const router = useRouter();
   const params = useLocalSearchParams();
+  const insets = useSafeAreaInsets();
   const usuarioLogado = auth.currentUser;
 
   const [messages, setMessages] = useState<IMessage[]>([]);
@@ -204,23 +208,29 @@ export default function TelaChat() {
         <View style={{ width: 24 }} />
       </View>
 
-      <GiftedChat
-        messages={messages}
-        onSend={(msgs) => onSend(msgs)}
-        user={{
-          _id: usuarioLogado.uid,
-        }}
-        textInputProps={{
-          placeholder: 'Digite uma mensagem...',
-          placeholderTextColor: '#999',
-        }}
-      />
+      <View style={[styles.chatArea, { paddingBottom: insets.bottom }]}>
+        <GiftedChat
+          messages={messages}
+          onSend={(msgs) => onSend(msgs)}
+          user={{
+            _id: usuarioLogado.uid,
+          }}
+          keyboardAvoidingViewProps={{
+            keyboardVerticalOffset: CHAT_HEADER_HEIGHT,
+          }}
+          textInputProps={{
+            placeholder: 'Digite uma mensagem...',
+            placeholderTextColor: '#999',
+          }}
+        />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f7f7f7' },
+  chatArea: { flex: 1 },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   centerList: { padding: 24, alignItems: 'center' },
   listContent: { padding: 12 },
