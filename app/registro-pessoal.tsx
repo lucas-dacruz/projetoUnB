@@ -66,6 +66,7 @@ export default function CadastroPessoalForm() {
         telefone,
         usuario,
         imagemBase64: imagemPerfil,
+        expoPushToken: null,
         criadoEm: new Date()
       });
 

@@ -12,7 +12,7 @@ import {
   setDoc,
   where,
 } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -58,6 +58,7 @@ type ChatResumo = {
   nomeDono?: string;
   fotoDono?: string | null;
   outroParticipante?: UsuarioResumo;
+  tipo_chat?: 'negociacao' | 'transferencia';
 };
 
 const normalizarImagem = (imagem?: string | null) => {
@@ -133,6 +134,8 @@ const obterOutroParticipante = (chat: ChatResumo, usuarioId?: string): UsuarioRe
   return criarUsuarioFallback(outroId);
 };
 
+const obterTipoChat = (chat: ChatResumo) => chat.tipo_chat || 'negociacao';
+
 function AvatarUsuario({ usuario, tamanho = 48 }: { usuario: UsuarioResumo; tamanho?: number }) {
   const inicial = usuario.nome.charAt(0).toUpperCase();
 
@@ -173,9 +176,17 @@ function ItemConversa({
   onPress: () => void;
 }) {
   const outro = obterOutroParticipante(chat, usuarioId);
+  const tipoChat = obterTipoChat(chat);
+  const tipoChatTexto = tipoChat === 'transferencia' ? 'Transferencia' : 'Negociacao';
 
   return (
-    <TouchableOpacity style={styles.chatItem} onPress={onPress}>
+    <TouchableOpacity
+      style={[
+        styles.chatItem,
+        tipoChat === 'transferencia' ? styles.chatTransferencia : styles.chatNegociacao,
+      ]}
+      onPress={onPress}
+    >
       <AvatarUsuario usuario={outro} />
       <View style={styles.chatItemTexts}>
         <View style={styles.chatItemTop}>
@@ -188,6 +199,14 @@ function ItemConversa({
             </Text>
           )}
         </View>
+        <Text
+          style={[
+            styles.chatType,
+            tipoChat === 'transferencia' ? styles.chatTypeTransferencia : styles.chatTypeNegociacao,
+          ]}
+        >
+          {tipoChatTexto}
+        </Text>
         <Text style={styles.chatPreview} numberOfLines={1}>
           {chat.ultimoTexto || 'Conversa iniciada'}
         </Text>
@@ -201,6 +220,7 @@ export default function TelaChat() {
   const params = useLocalSearchParams();
   const insets = useSafeAreaInsets();
   const usuarioLogado = auth.currentUser;
+  const flatListRef = useRef<FlatList<ChatResumo>>(null);
 
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [chats, setChats] = useState<ChatResumo[]>([]);
@@ -210,6 +230,7 @@ export default function TelaChat() {
   const [perfilUsuarioLogado, setPerfilUsuarioLogado] = useState<UsuarioResumo | null>(null);
 
   const chatIdParam = params.chatId as string | undefined;
+  const scrollToChatId = params.scrollToChatId as string | undefined;
   const animalId = params.animalId as string | undefined;
   const ownerId = params.ownerId as string | undefined;
   const animalNome = params.animalNome as string | undefined;
@@ -280,6 +301,18 @@ export default function TelaChat() {
 
     return () => unsubscribe();
   }, [exibindoLista, usuarioLogado]);
+
+  useEffect(() => {
+    if (!exibindoLista || !scrollToChatId || chats.length === 0) {
+      return;
+    }
+
+    const indice = chats.findIndex((chat) => chat.id === scrollToChatId);
+
+    if (indice >= 0) {
+      flatListRef.current?.scrollToIndex({ index: indice, animated: true });
+    }
+  }, [chats, exibindoLista, scrollToChatId]);
 
   useEffect(() => {
     if (!usuarioLogado || !chatId || exibindoLista) {
@@ -378,6 +411,7 @@ export default function TelaChat() {
       const dadosChat: any = {
         atualizadoEm: serverTimestamp(),
         ultimoTexto: mensagem.text,
+        tipo_chat: chatAtual?.tipo_chat || 'negociacao',
       };
 
       const chatAnimalId = chatAtual?.animalId || animalId;
@@ -447,9 +481,13 @@ export default function TelaChat() {
         </View>
 
         <FlatList
+          ref={flatListRef}
           data={chats}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
+          onScrollToIndexFailed={() => {
+            flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+          }}
           ListEmptyComponent={
             <View style={styles.centerList}>
               <Text style={styles.emptyText}>Nenhuma conversa encontrada.</Text>
@@ -526,9 +564,12 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     borderWidth: 1,
     borderColor: '#e6e7e8',
+    borderLeftWidth: 6,
     flexDirection: 'row',
     alignItems: 'center',
   },
+  chatNegociacao: { borderLeftColor: '#F2C94C' },
+  chatTransferencia: { borderLeftColor: '#88c9bf' },
   chatItemTexts: { flex: 1, marginLeft: 12 },
   chatItemTop: {
     flexDirection: 'row',
@@ -543,6 +584,9 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   chatAnimalSmall: { maxWidth: 110, fontSize: 12, color: '#88c9bf' },
+  chatType: { fontSize: 11, marginTop: 2, fontWeight: '700' },
+  chatTypeNegociacao: { color: '#c79b16' },
+  chatTypeTransferencia: { color: '#589b9b' },
   chatPreview: { fontSize: 14, color: '#757575', marginTop: 3 },
   avatar: { backgroundColor: '#cfe9e5' },
   avatarFallback: { justifyContent: 'center', alignItems: 'center' },
