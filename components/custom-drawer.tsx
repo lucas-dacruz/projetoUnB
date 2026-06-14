@@ -124,6 +124,8 @@ export default function CustomDrawer() {
         <MenuItem label="Favoritos" />
         <Divider />
         <MenuItem label="Chat" onPress={() => router.push('/(app)/chat')} />
+        <Divider />
+        <MenuItem label="Mapa" onPress={() => router.push('/(app)/mapa')} />
 
         <SectionHeader
           icon="pets"

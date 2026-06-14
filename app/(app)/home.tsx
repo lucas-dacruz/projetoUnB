@@ -1,11 +1,11 @@
 import { useRouter } from 'expo-router';
-import { useNavigation } from '@react-navigation/native';
+import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function Home() {
   const router = useRouter();
-  const navigation = useNavigation<DrawerNavigationProp<{}>>();
+  const navigation = useNavigation<DrawerNavigationProp<ParamListBase>>();
 
   return (
     <View style={styles.container}>
@@ -28,7 +28,6 @@ export default function Home() {
       <View style={styles.buttonsContainer}>
         <CustomButton text="ADOTAR" 
         onPress={() => router.push('/adotar' as any)}/>
-        <CustomButton text="AJUDAR" />
         <CustomButton 
           text="CADASTRAR ANIMAL"
           onPress={() => router.push('../registro-animal')}
