@@ -72,6 +72,15 @@ const registrarToken = async (uid: string) => {
   if (!projectId) return;
 
   const token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
+
+  console.log('push debug', {
+    uid,
+    platform: Platform.OS,
+    permissionStatus: status,
+    projectId,
+    token,
+  });
+
   const usuarioRef = doc(db, 'usuarios', uid);
   const usuarioSnap = await getDoc(usuarioRef);
   const tokenAtual = usuarioSnap.exists() ? usuarioSnap.data().expoPushToken : null;
