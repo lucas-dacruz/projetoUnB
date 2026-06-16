@@ -53,7 +53,14 @@ export default function Home() {
       (snapshot: QuerySnapshot<DocumentData>) => {
         retornosAdotante = snapshot.docs.filter((documento) => {
           const status = documento.data().status;
-          return status === 'recusada' || status === 'em_negociacao' || status === 'aprovada';
+          return (
+            status === 'rejeitada' ||
+            status === 'negociacao' ||
+            status === 'aceita' ||
+            status === 'recusada' ||
+            status === 'em_negociacao' ||
+            status === 'aprovada'
+          );
         }).length;
         atualizarTotal();
       },

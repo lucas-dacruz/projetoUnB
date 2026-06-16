@@ -27,11 +27,13 @@ import {
 type Notificacao = {
   id: string;
   tipo?: 'intencao_adocao';
-  status?: 'pendente' | 'recusada' | 'em_negociacao' | 'aprovada';
+  status?: 'pendente' | 'rejeitada' | 'negociacao' | 'aceita' | 'recusada' | 'em_negociacao' | 'aprovada';
+  animalId?: string;
   petId?: string;
   petNome?: string;
   donoId?: string;
   donoNome?: string;
+  interessadoId?: string;
   adotanteId?: string;
   adotanteNome?: string;
   chatId?: string | null;
@@ -40,6 +42,13 @@ type Notificacao = {
 };
 
 type TipoChat = 'negociacao' | 'transferencia';
+type StatusResposta = 'rejeitada' | 'negociacao' | 'aceita';
+
+const statusLegado: Record<StatusResposta, 'recusada' | 'em_negociacao' | 'aprovada'> = {
+  rejeitada: 'recusada',
+  negociacao: 'em_negociacao',
+  aceita: 'aprovada',
+};
 
 export default function Notificacoes() {
   const router = useRouter();
@@ -118,25 +127,25 @@ export default function Notificacoes() {
 
   const renderMensagem = (notificacao: Notificacao) => {
     const user = auth.currentUser;
-    const donoNome = notificacao.donoNome || 'Usuario';
     const adotanteNome = notificacao.adotanteNome || 'Alguem';
     const petNome = notificacao.petNome || 'seu pet';
+    const interessadoId = notificacao.interessadoId || notificacao.adotanteId;
 
-    if (user?.uid === notificacao.adotanteId) {
+    if (user?.uid === interessadoId) {
       if (notificacao.mensagemAdotante) {
         return notificacao.mensagemAdotante;
       }
 
-      if (notificacao.status === 'recusada') {
-        return `Usuario ${donoNome} recusou sua intencao de adocao.`;
+      if (notificacao.status === 'rejeitada' || notificacao.status === 'recusada') {
+        return 'Sua solicitação de adoção foi rejeitada.';
       }
 
-      if (notificacao.status === 'em_negociacao') {
-        return `Usuario ${donoNome} aceitou negociar o pet ${petNome} com voce.`;
+      if (notificacao.status === 'negociacao' || notificacao.status === 'em_negociacao') {
+        return 'O responsável deseja negociar a adoção.';
       }
 
-      if (notificacao.status === 'aprovada') {
-        return `Parabens! Usuario ${donoNome} aceitou doar o pet ${petNome} para voce! Abra o chat para tratar da transferencia do animal para sua posse.`;
+      if (notificacao.status === 'aceita' || notificacao.status === 'aprovada') {
+        return 'Sua solicitação de adoção foi aceita.';
       }
     }
 
@@ -148,38 +157,38 @@ export default function Notificacoes() {
   };
 
   const montarMensagemAdotante = (
-    notificacao: Notificacao,
-    status: 'recusada' | 'em_negociacao' | 'aprovada'
+    _notificacao: Notificacao,
+    status: StatusResposta
   ) => {
-    const donoNome = notificacao.donoNome || 'Usuario';
-    const petNome = notificacao.petNome || 'seu pet';
-
-    if (status === 'recusada') {
-      return `Usuario ${donoNome} recusou sua intencao de adocao.`;
+    if (status === 'rejeitada') {
+      return 'Sua solicitação de adoção foi rejeitada.';
     }
 
-    if (status === 'em_negociacao') {
-      return `Usuario ${donoNome} aceitou negociar o pet ${petNome} com voce.`;
+    if (status === 'negociacao') {
+      return 'O responsável deseja negociar a adoção.';
     }
 
-    return `Parabens! Usuario ${donoNome} aceitou doar o pet ${petNome} para voce! Abra o chat para tratar da transferencia do animal para sua posse.`;
+    return 'Sua solicitação de adoção foi aceita.';
   };
 
   const criarOuAtualizarChat = async (notificacao: Notificacao, tipoChat: TipoChat) => {
-    if (!notificacao.petId || !notificacao.donoId || !notificacao.adotanteId) {
+    const animalId = notificacao.animalId || notificacao.petId;
+    const interessadoId = notificacao.interessadoId || notificacao.adotanteId;
+
+    if (!animalId || !notificacao.donoId || !interessadoId) {
       throw new Error('Notificacao sem dados suficientes para criar chat.');
     }
 
-    const chatId = notificacao.chatId || `${notificacao.petId}_${notificacao.adotanteId}`;
+    const chatId = notificacao.chatId || `${animalId}_${interessadoId}`;
 
     await setDoc(
       doc(db, 'chats', chatId),
       {
-        animalId: notificacao.petId,
+        animalId,
         animalNome: notificacao.petNome || 'Animal',
         ownerId: notificacao.donoId,
-        interessadoId: notificacao.adotanteId,
-        participantes: [notificacao.donoId, notificacao.adotanteId],
+        interessadoId,
+        participantes: [notificacao.donoId, interessadoId],
         donoNome: notificacao.donoNome || 'Usuario',
         interessadoNome: notificacao.adotanteNome || 'Usuario',
         tipo_chat: tipoChat,
@@ -195,7 +204,7 @@ export default function Notificacoes() {
 
   const atualizarStatus = async (
     notificacao: Notificacao,
-    status: 'recusada' | 'em_negociacao' | 'aprovada'
+    status: StatusResposta
   ) => {
     if (processandoId) return;
 
@@ -204,14 +213,15 @@ export default function Notificacoes() {
 
       const dadosAtualizacao: Record<string, unknown> = {
         status,
+        statusLegado: statusLegado[status],
         mensagemAdotante: montarMensagemAdotante(notificacao, status),
         updatedAt: serverTimestamp(),
       };
 
-      if (status === 'em_negociacao' || status === 'aprovada') {
+      if (status === 'negociacao' || status === 'aceita') {
         dadosAtualizacao.chatId = await criarOuAtualizarChat(
           notificacao,
-          status === 'em_negociacao' ? 'negociacao' : 'transferencia'
+          status === 'negociacao' ? 'negociacao' : 'transferencia'
         );
       }
 
@@ -278,21 +288,21 @@ export default function Notificacoes() {
                 <View style={styles.actions}>
                   <TouchableOpacity
                     style={[styles.actionButton, styles.rejectButton]}
-                    onPress={() => atualizarStatus(item, 'recusada')}
+                    onPress={() => atualizarStatus(item, 'rejeitada')}
                     disabled={processandoId === item.id}
                   >
                     <Text style={styles.actionText}>Recusar</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.actionButton, styles.negotiateButton]}
-                    onPress={() => atualizarStatus(item, 'em_negociacao')}
+                    onPress={() => atualizarStatus(item, 'negociacao')}
                     disabled={processandoId === item.id}
                   >
                     <Text style={styles.actionText}>Negociar</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.actionButton, styles.acceptButton]}
-                    onPress={() => atualizarStatus(item, 'aprovada')}
+                    onPress={() => atualizarStatus(item, 'aceita')}
                     disabled={processandoId === item.id}
                   >
                     <Text style={styles.actionText}>Aceitar</Text>

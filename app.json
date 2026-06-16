@@ -45,7 +45,15 @@
           }
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon.png",
+          "color": "#88C9BF",
+          "defaultChannel": "adocao"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

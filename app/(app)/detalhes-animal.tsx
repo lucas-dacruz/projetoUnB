@@ -117,10 +117,12 @@ export default function DetalhesAnimal() {
       await addDoc(notificacoesRef, {
         tipo: 'intencao_adocao',
         status: 'pendente',
+        animalId: petId,
         petId,
         petNome: animal.nome || 'Pet',
         donoId: animal.ownerId,
         donoNome,
+        interessadoId: user.uid,
         adotanteId: user.uid,
         adotanteNome,
         chatId: null,
