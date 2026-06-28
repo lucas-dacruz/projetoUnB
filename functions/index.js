@@ -56,6 +56,9 @@ const enviarPush = async ({ token, title, body, data }) => {
       title,
       body,
       data,
+      android: {
+        channelId: 'adocao',
+      },
     }),
   });
 
