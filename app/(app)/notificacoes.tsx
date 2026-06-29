@@ -1,4 +1,5 @@
-import { auth, db } from '@/firebaseConfig';
+import { ROUTES } from '@/constants/routes';
+import { auth, db } from '@/services/firebase';
 import { useRouter } from 'expo-router';
 import {
   collection,
@@ -12,6 +13,7 @@ import {
   Timestamp,
   updateDoc,
   where,
+  writeBatch,
 } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import {
@@ -39,6 +41,8 @@ type Notificacao = {
   chatId?: string | null;
   mensagemAdotante?: string;
   createdAt?: Timestamp;
+  lidaDono?: boolean;
+  lidaAdotante?: boolean;
 };
 
 type TipoChat = 'negociacao' | 'transferencia';
@@ -73,6 +77,36 @@ export default function Notificacoes() {
     let notificacoesDono: Notificacao[] = [];
     let notificacoesAdotante: Notificacao[] = [];
 
+    const marcarComoVisualizadas = async (lista: Notificacao[]) => {
+      const batch = writeBatch(db);
+      let temAtualizacao = false;
+
+      lista.forEach((notificacao) => {
+        const atualizacao: Partial<Pick<Notificacao, 'lidaDono' | 'lidaAdotante'>> = {};
+
+        if (notificacao.donoId === user.uid && notificacao.lidaDono !== true) {
+          atualizacao.lidaDono = true;
+        }
+
+        if (notificacao.adotanteId === user.uid && notificacao.lidaAdotante !== true) {
+          atualizacao.lidaAdotante = true;
+        }
+
+        if (Object.keys(atualizacao).length > 0) {
+          batch.update(doc(db, 'notificacoes', notificacao.id), atualizacao);
+          temAtualizacao = true;
+        }
+      });
+
+      if (temAtualizacao) {
+        try {
+          await batch.commit();
+        } catch (error) {
+          console.log('Erro ao marcar notificacoes como visualizadas:', error);
+        }
+      }
+    };
+
     const atualizarLista = () => {
       const mapa = new Map<string, Notificacao>();
 
@@ -88,6 +122,7 @@ export default function Notificacoes() {
 
       setNotificacoes(lista);
       setCarregando(false);
+      marcarComoVisualizadas(lista);
     };
 
     const tratarSnapshot = (tipoLista: 'dono' | 'adotante') => (
@@ -236,7 +271,7 @@ export default function Notificacoes() {
 
   const abrirNotificacao = (notificacao: Notificacao) => {
     if (notificacao.chatId) {
-      router.push({ pathname: '/(app)/chat', params: { chatId: notificacao.chatId } });
+      router.push({ pathname: ROUTES.chat, params: { chatId: notificacao.chatId } });
     }
   };
 

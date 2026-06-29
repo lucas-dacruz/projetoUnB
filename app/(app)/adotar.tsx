@@ -1,11 +1,12 @@
 import AnimalCard from '@/components/animal-card';
+import { ROUTES } from '@/constants/routes';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import React, { useCallback, useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { db } from '../../firebaseConfig';
+import { db } from '@/services/firebase';
 
 export default function ListaAnimais() {
   const router = useRouter();
@@ -42,7 +43,7 @@ export default function ListaAnimais() {
   const renderItem = ({ item }: { item: any }) => (
     <AnimalCard
       animal={item}
-      onPress={() => router.push({ pathname: '/detalhes-animal', params: { id: item.id } })}
+      onPress={() => router.push({ pathname: ROUTES.detalhesAnimal, params: { id: item.id } })}
     />
   );
   return (
@@ -54,7 +55,7 @@ export default function ListaAnimais() {
         
         <Text style={styles.titleHeader}>Animais disponíveis</Text>
         
-        <TouchableOpacity onPress={() => router.replace('/(app)/home')}>
+        <TouchableOpacity onPress={() => router.replace(ROUTES.home)}>
           <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
       </View>

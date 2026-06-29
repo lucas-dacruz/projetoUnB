@@ -1,4 +1,5 @@
-import { auth, db } from '@/firebaseConfig';
+import { ROUTES } from '@/constants/routes';
+import { auth, db } from '@/services/firebase';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import {
   addDoc,
@@ -497,7 +498,7 @@ export default function TelaChat() {
             <ItemConversa
               chat={item}
               usuarioId={usuarioLogado.uid}
-              onPress={() => router.push({ pathname: '/(app)/chat', params: { chatId: item.id } })}
+              onPress={() => router.push({ pathname: ROUTES.chat, params: { chatId: item.id } })}
             />
           )}
         />

@@ -1,6 +1,7 @@
 import FormInput from '@/components/form-input';
 import ImageSelector from '@/components/image-selector';
-import { auth, db } from '@/firebaseConfig';
+import { ROUTES } from '@/constants/routes';
+import { auth, db } from '@/services/firebase';
 import { useRouter } from 'expo-router';
 import { addDoc, collection } from 'firebase/firestore';
 import React, { useState } from 'react';
@@ -75,7 +76,7 @@ export default function RegistroAnimal() {
         disponivel: true
       });
 
-      router.push('./sucesso-animal');
+      router.push(ROUTES.sucessoAnimal);
     } catch (error) {
       console.log(error);
       alert('Erro ao salvar!');
@@ -85,7 +86,7 @@ export default function RegistroAnimal() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.replace('/home')}>
+        <TouchableOpacity onPress={() => router.replace(ROUTES.home)}>
           <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
         <Text style={styles.titleHeader}>Cadastro do Animal</Text>

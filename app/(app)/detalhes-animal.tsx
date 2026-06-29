@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { auth, db } from '../../firebaseConfig'; 
+import { ROUTES } from '@/constants/routes';
+import { auth, db } from '@/services/firebase'; 
 import {
   addDoc,
   collection,
@@ -147,7 +148,7 @@ export default function DetalhesAnimal() {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <TouchableOpacity onPress={() => router.push('/adotar')}>
+          <TouchableOpacity onPress={() => router.push(ROUTES.adotar)}>
             <Text style={styles.backIcon}>←</Text>
           </TouchableOpacity>
           <Text style={styles.titleHeader}>{animal.nome}</Text>
@@ -206,7 +207,7 @@ export default function DetalhesAnimal() {
 
           <TouchableOpacity
             style={styles.buttonMapa}
-            onPress={() => router.push({ pathname: './mapa', params: { id: params.id as string } })}
+            onPress={() => router.push({ pathname: ROUTES.mapa, params: { id: params.id as string } })}
           >
             <Text style={styles.buttonText}>VER NO MAPA</Text>
           </TouchableOpacity>

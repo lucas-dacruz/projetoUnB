@@ -1,4 +1,5 @@
-import { auth, db } from '@/firebaseConfig';
+import { ROUTES } from '@/constants/routes';
+import { auth, db } from '@/services/firebase';
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import { router } from 'expo-router';
@@ -32,18 +33,18 @@ const navegarPorNotificacao = (data?: NotificationData) => {
   if (!data) return;
 
   if (data.chatId) {
-    router.push({ pathname: '/(app)/chat', params: { chatId: data.chatId } });
+    router.push({ pathname: ROUTES.chat, params: { chatId: data.chatId } });
     return;
   }
 
   const animalId = data.animalId || data.petId;
 
   if (data.screen === 'animal' && animalId) {
-    router.push({ pathname: '/(app)/detalhes-animal', params: { id: animalId } });
+    router.push({ pathname: ROUTES.detalhesAnimal, params: { id: animalId } });
     return;
   }
 
-  router.push('/(app)/notificacoes' as any);
+  router.push({ pathname: ROUTES.notificacoes });
 };
 
 const registrarToken = async (uid: string) => {

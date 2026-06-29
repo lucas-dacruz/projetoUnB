@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
+import { ROUTES } from '@/constants/routes';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import * as Notifications from 'expo-notifications';
-import { auth, db } from '@/firebaseConfig';
+import { auth, db } from '@/services/firebase';
 import { collection, DocumentData, onSnapshot, query, QuerySnapshot, where } from 'firebase/firestore';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -75,31 +75,6 @@ export default function Home() {
     };
   }, []);
 
-  const enviarNotificacaoLocal = async () => {
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: 'Teste local',
-        body: 'Notificação com app aberto/foreground',
-        data: { screen: 'notificacoes' },
-      },
-      trigger: null,
-    });
-  };
-
-  const agendarNotificacaoBackground = async () => {
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: 'Teste background',
-        body: 'Essa notificação deve aparecer em segundo plano',
-      },
-      trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-        seconds: 5,
-        repeats: false,
-      },
-    });
-  };
-
   return (
     <View style={styles.container}>
 
@@ -111,7 +86,7 @@ export default function Home() {
 
       <TouchableOpacity
         style={styles.notificationButton}
-        onPress={() => router.push('/(app)/notificacoes' as any)}
+        onPress={() => router.push({ pathname: ROUTES.notificacoes })}
       >
         <MaterialIcons name="notifications-none" size={26} color="#6FCF97" />
         {notificacoesPendentes > 0 ? (
@@ -134,22 +109,15 @@ export default function Home() {
 
       <View style={styles.buttonsContainer}>
         <CustomButton text="ADOTAR" 
-        onPress={() => router.push('/adotar' as any)}/>
+        onPress={() => router.push(ROUTES.adotar)}/>
         <CustomButton 
           text="CADASTRAR ANIMAL"
-          onPress={() => router.push('../registro-animal')}
+          onPress={() => router.push(ROUTES.registroAnimal)}
         />
       </View>
 
-      <TouchableOpacity onPress={() => router.replace('/')}>
+      <TouchableOpacity onPress={() => router.replace(ROUTES.login)}>
         <Text style={styles.login}>logout</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.button} onPress={enviarNotificacaoLocal}>
-        <Text style={styles.buttonText}>Teste local</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={agendarNotificacaoBackground}>
-        <Text style={styles.buttonText}>Teste background</Text>
       </TouchableOpacity>
 
       <Text style={styles.logo}>meau</Text>
