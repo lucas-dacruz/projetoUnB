@@ -1,11 +1,79 @@
+import { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
-import { useNavigation } from '@react-navigation/native';
+import { ROUTES } from '@/constants/routes';
+import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { auth, db } from '@/services/firebase';
+import { collection, DocumentData, onSnapshot, query, QuerySnapshot, where } from 'firebase/firestore';
+import { MaterialIcons } from '@expo/vector-icons';
+
 
 export default function Home() {
   const router = useRouter();
-  const navigation = useNavigation<DrawerNavigationProp<{}>>();
+  const navigation = useNavigation<DrawerNavigationProp<ParamListBase>>();
+  const [notificacoesPendentes, setNotificacoesPendentes] = useState(0);
+
+  useEffect(() => {
+    const user = auth.currentUser;
+
+    if (!user) {
+      setNotificacoesPendentes(0);
+      return;
+    }
+
+    const notificacoesRef = collection(db, 'notificacoes');
+    const notificacoesDonoQuery = query(
+      notificacoesRef,
+      where('donoId', '==', user.uid),
+      where('lidaDono', '==', false)
+    );
+    const notificacoesAdotanteQuery = query(
+      notificacoesRef,
+      where('adotanteId', '==', user.uid),
+      where('lidaAdotante', '==', false)
+    );
+
+    let pendentesDono = 0;
+    let retornosAdotante = 0;
+
+    const atualizarTotal = () => {
+      setNotificacoesPendentes(pendentesDono + retornosAdotante);
+    };
+
+    const unsubscribeDono = onSnapshot(
+      notificacoesDonoQuery,
+      (snapshot) => {
+        pendentesDono = snapshot.size;
+        atualizarTotal();
+      },
+      (error) => console.log('Erro ao ouvir notificacoes:', error)
+    );
+
+    const unsubscribeAdotante = onSnapshot(
+      notificacoesAdotanteQuery,
+      (snapshot: QuerySnapshot<DocumentData>) => {
+        retornosAdotante = snapshot.docs.filter((documento) => {
+          const status = documento.data().status;
+          return (
+            status === 'rejeitada' ||
+            status === 'negociacao' ||
+            status === 'aceita' ||
+            status === 'recusada' ||
+            status === 'em_negociacao' ||
+            status === 'aprovada'
+          );
+        }).length;
+        atualizarTotal();
+      },
+      (error) => console.log('Erro ao ouvir notificacoes:', error)
+    );
+
+    return () => {
+      unsubscribeDono();
+      unsubscribeAdotante();
+    };
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -14,6 +82,20 @@ export default function Home() {
         <View style={styles.line} />
         <View style={styles.line} />
         <View style={styles.line} />
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.notificationButton}
+        onPress={() => router.push({ pathname: ROUTES.notificacoes })}
+      >
+        <MaterialIcons name="notifications-none" size={26} color="#6FCF97" />
+        {notificacoesPendentes > 0 ? (
+          <View style={styles.notificationBadge}>
+            <Text style={styles.notificationBadgeText}>
+              {notificacoesPendentes > 9 ? '9+' : notificacoesPendentes}
+            </Text>
+          </View>
+        ) : null}
       </TouchableOpacity>
 
       <Text style={styles.title}>Olá!</Text>
@@ -27,20 +109,18 @@ export default function Home() {
 
       <View style={styles.buttonsContainer}>
         <CustomButton text="ADOTAR" 
-        onPress={() => router.push('/adotar' as any)}/>
-        <CustomButton text="AJUDAR" />
+        onPress={() => router.push(ROUTES.adotar)}/>
         <CustomButton 
           text="CADASTRAR ANIMAL"
-          onPress={() => router.push('../registro-animal')}
+          onPress={() => router.push(ROUTES.registroAnimal)}
         />
       </View>
 
-      <TouchableOpacity onPress={() => router.replace('/')}>
+      <TouchableOpacity onPress={() => router.replace(ROUTES.login)}>
         <Text style={styles.login}>logout</Text>
       </TouchableOpacity>
 
       <Text style={styles.logo}>meau</Text>
-
     </View>
   );
 }
@@ -71,6 +151,35 @@ const styles = StyleSheet.create({
     height: 3,
     backgroundColor: '#6FCF97',
     marginVertical: 2,
+  },
+
+  notificationButton: {
+    position: 'absolute',
+    top: 54,
+    right: 28,
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  notificationBadge: {
+    position: 'absolute',
+    top: 2,
+    right: 2,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: '#EB5757',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 4,
+  },
+
+  notificationBadgeText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: 'bold',
   },
 
   title: {

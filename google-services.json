@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "595294088666",
+    "project_id": "meuapp-b56be",
+    "storage_bucket": "meuapp-b56be.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:595294088666:android:919378b9326bec800ba4e3",
+        "android_client_info": {
+          "package_name": "com.tonhaoturbina.projetoUnB"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkIbPVmzLMFFPAsuyjc0QBIOJJ-vbnC7s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,14 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { auth, db } from '../../firebaseConfig'; 
-import { doc, getDoc } from 'firebase/firestore';
+import { ROUTES } from '@/constants/routes';
+import { auth, db } from '@/services/firebase'; 
+import { usuarioFoiRejeitadoParaPet } from '@/services/adoption';
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  serverTimestamp,
+  where,
+} from 'firebase/firestore';
+
+type UsuarioResumo = {
+  nome?: string;
+  usuario?: string;
+};
 
 export default function DetalhesAnimal() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const [animal, setAnimal] = useState<any>(null);
   const [carregando, setCarregando] = useState(true);
+  const [interesseBloqueado, setInteresseBloqueado] = useState(false);
+  const [enviandoInteresse, setEnviandoInteresse] = useState(false);
 
   useEffect(() => {
     const carregarDados = async () => {
@@ -17,7 +35,17 @@ export default function DetalhesAnimal() {
           const docRef = doc(db, "animais", params.id as string);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
-            setAnimal(docSnap.data());
+            const dadosAnimal = docSnap.data();
+            const user = auth.currentUser;
+
+            setAnimal(dadosAnimal);
+
+            if (user && user.uid !== dadosAnimal.ownerId) {
+              const foiRejeitado = await usuarioFoiRejeitadoParaPet(params.id as string, user.uid);
+              setInteresseBloqueado(foiRejeitado);
+            } else {
+              setInteresseBloqueado(false);
+            }
           }
         } catch (error) {
           console.error("Erro ao buscar detalhes:", error);
@@ -44,12 +72,137 @@ export default function DetalhesAnimal() {
   };
 
   const imageUri = Array.isArray(animal.imagemBase64) ? animal.imagemBase64[0] : animal.imagemBase64;
+  const usuarioAtual = auth.currentUser;
+  const ehDono = !!usuarioAtual && usuarioAtual.uid === animal.ownerId;
+  const petIndisponivel = animal.disponivel === false;
+  const exibirBotaoAdocao = !ehDono && !petIndisponivel && !interesseBloqueado;
+
+  const carregarNomeUsuario = async (uid: string) => {
+    const usuarioSnap = await getDoc(doc(db, 'usuarios', uid));
+
+    if (!usuarioSnap.exists()) {
+      return 'Usuario';
+    }
+
+    const usuario = usuarioSnap.data() as UsuarioResumo;
+    return usuario.nome || usuario.usuario || 'Usuario';
+  };
+
+  const demonstrarInteresse = async () => {
+    if (!animal || enviandoInteresse) return;
+
+    const user = auth.currentUser;
+    const petId = params.id as string;
+
+    if (!user) {
+      Alert.alert('Login necessario', 'Voce precisa estar logado para demonstrar interesse.');
+      return;
+    }
+
+    if (!animal.ownerId) {
+      Alert.alert('Erro', 'Este pet nao possui dono associado.');
+      return;
+    }
+
+    if (user.uid === animal.ownerId) {
+      Alert.alert('Acao nao permitida', 'Você não pode demonstrar interesse no seu próprio pet.');
+      return;
+    }
+
+    if (animal.disponivel === false) {
+      Alert.alert('Pet indisponivel', 'Este pet nao esta disponivel para adocao.');
+      return;
+    }
+
+    try {
+      setEnviandoInteresse(true);
+
+      const petSnap = await getDoc(doc(db, 'animais', petId));
+
+      if (!petSnap.exists()) {
+        Alert.alert('Pet indisponivel', 'Este pet nao foi encontrado.');
+        return;
+      }
+
+      const petAtual = petSnap.data();
+      setAnimal(petAtual);
+
+      if (!petAtual.ownerId) {
+        Alert.alert('Erro', 'Este pet nao possui dono associado.');
+        return;
+      }
+
+      if (user.uid === petAtual.ownerId) {
+        Alert.alert('Acao nao permitida', 'Você não pode demonstrar interesse no seu próprio pet.');
+        return;
+      }
+
+      if (petAtual.disponivel === false) {
+        Alert.alert('Pet indisponivel', 'Este pet nao esta disponivel para adocao.');
+        return;
+      }
+
+      const foiRejeitado = await usuarioFoiRejeitadoParaPet(petId, user.uid);
+
+      if (foiRejeitado) {
+        setInteresseBloqueado(true);
+        Alert.alert('Solicitacao bloqueada', 'Sua solicitação de adoção para este pet foi rejeitada anteriormente.');
+        return;
+      }
+
+      const notificacoesRef = collection(db, 'notificacoes');
+      const chaveUnica = `${petId}_${petAtual.ownerId}_${user.uid}`;
+      const notificacaoExistente = query(
+        notificacoesRef,
+        where('chaveUnica', '==', chaveUnica),
+      );
+
+      const existenteSnap = await getDocs(notificacaoExistente);
+
+      if (!existenteSnap.empty) {
+        Alert.alert('Interesse ja registrado', 'Ja existe um registro de interesse seu para este pet.');
+        return;
+      }
+
+      const [donoNome, adotanteNome] = await Promise.all([
+        carregarNomeUsuario(petAtual.ownerId),
+        carregarNomeUsuario(user.uid),
+      ]);
+
+      await addDoc(notificacoesRef, {
+        tipo: 'intencao_adocao',
+        status: 'pendente',
+        animalId: petId,
+        petId,
+        petNome: petAtual.nome || 'Pet',
+        donoId: petAtual.ownerId,
+        donoNome,
+        interessadoId: user.uid,
+        adotanteId: user.uid,
+        adotanteNome,
+        chatId: null,
+        lidaDono: false,
+        lidaAdotante: false,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        chaveUnica,
+        pushPreparado: false,
+      });
+
+      Alert.alert('Interesse enviado', 'O dono do pet recebeu sua demonstracao de interesse.');
+    } catch (error) {
+      console.error('Erro ao criar notificacao de adocao:', error);
+      Alert.alert('Erro', 'Nao foi possivel enviar seu interesse agora.');
+    } finally {
+      setEnviandoInteresse(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <TouchableOpacity onPress={() => router.push('/adotar')}>
+          <TouchableOpacity onPress={() => router.push(ROUTES.adotar)}>
             <Text style={styles.backIcon}>←</Text>
           </TouchableOpacity>
           <Text style={styles.titleHeader}>{animal.nome}</Text>
@@ -108,46 +261,28 @@ export default function DetalhesAnimal() {
 
           <TouchableOpacity
             style={styles.buttonMapa}
-            onPress={() => router.push({ pathname: './mapa', params: { id: params.id as string } })}
+            onPress={() => router.push({ pathname: ROUTES.mapa, params: { id: params.id as string } })}
           >
             <Text style={styles.buttonText}>VER NO MAPA</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
-            style={styles.buttonVoltar} 
-            onPress={() => {
-              if (!animal) return;
-
-              const user = auth.currentUser;
-
-              if (!user) {
-                Alert.alert('Login necessário', 'Você precisa estar logado para iniciar uma conversa.');
-                return;
-              }
-
-              if (!animal.ownerId) {
-                Alert.alert('Erro', 'Este pet não possui dono associado.');
-                return;
-              }
-
-              if (user.uid === animal.ownerId) {
-                Alert.alert('Ação não permitida', 'Você não pode adotar seu próprio pet.');
-                return;
-              }
-              
-              // Redireciona para o chat passando os dados do animal e do dono via query params
-              router.push({
-                pathname: '/(app)/chat',
-                params: { 
-                  animalId: params.id,       // ID do documento do animal (ex: FCUa9P8Dhqr7r4FJW6PR)
-                  ownerId: animal.ownerId,    // ID do dono cadastrado no pet (ex: xxhgvBNLzlhoaLynRD7M3c2nWJp1)
-                  animalNome: animal.nome
-                }
-              });
-            }}
-          >
-            <Text style={styles.buttonText}>PRETENDO ADOTAR</Text>
-          </TouchableOpacity>
+          {exibirBotaoAdocao ? (
+            <TouchableOpacity 
+              style={styles.buttonVoltar} 
+              onPress={demonstrarInteresse}
+              disabled={enviandoInteresse}
+            >
+              <Text style={styles.buttonText}>{enviandoInteresse ? 'ENVIANDO...' : 'PRETENDO ADOTAR'}</Text>
+            </TouchableOpacity>
+          ) : (
+            <Text style={styles.adoptionBlockedText}>
+              {interesseBloqueado
+                ? 'Sua solicitação para este pet ja foi rejeitada.'
+                : petIndisponivel
+                  ? 'Este pet nao esta disponivel para adocao.'
+                  : 'Este pet esta vinculado ao seu perfil.'}
+            </Text>
+          )}
         </View>
       </ScrollView>
     </View>
@@ -175,5 +310,6 @@ const styles = StyleSheet.create({
   description: { fontSize: 14, color: '#757575', lineHeight: 20, marginBottom: 20 },
   buttonMapa: { backgroundColor: '#F2C94C', height: 40, width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 10, elevation: 2 },
   buttonVoltar: { backgroundColor: '#88c9bf', height: 40, width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 20, marginBottom: 40, elevation: 2 },
+  adoptionBlockedText: { color: '#757575', fontSize: 13, fontWeight: '500', marginTop: 20, marginBottom: 40, textAlign: 'center' },
   buttonText: { color: '#434343', fontSize: 12, fontWeight: 'bold' }
 });

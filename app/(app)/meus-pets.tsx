@@ -1,5 +1,6 @@
 import AnimalCard from '@/components/animal-card';
-import { auth, db } from '@/firebaseConfig';
+import { ROUTES } from '@/constants/routes';
+import { auth, db } from '@/services/firebase';
 import { useRouter } from 'expo-router';
 import { collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -46,7 +47,7 @@ export default function MeusPets() {
     <View style={!item.disponivel && styles.cardOculto}>
       <AnimalCard
         animal={item}
-        onPress={() => router.push({ pathname: '/detalhes-animal', params: { id: item.id } })}
+        onPress={() => router.push({ pathname: ROUTES.detalhesAnimal, params: { id: item.id } })}
         headerRight={
           <View style={[styles.badge, item.disponivel ? styles.badgeVisivel : styles.badgeOculto]}>
             <Text style={styles.badgeText}>{item.disponivel ? 'Visível' : 'Oculto'}</Text>
@@ -79,7 +80,7 @@ export default function MeusPets() {
       <View style={styles.header}>
         <View style={{ width: 28 }} />
         <Text style={styles.titleHeader}>Meus Pets</Text>
-        <TouchableOpacity onPress={() => router.replace('/(app)/home')}>
+        <TouchableOpacity onPress={() => router.replace(ROUTES.home)}>
           <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
       </View>

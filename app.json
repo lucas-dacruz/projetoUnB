@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "projetoUnB",
+    "name": "Meau",
     "slug": "projetoUnB",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -14,13 +14,12 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "foregroundImage": "./assets/images/icon.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.tonhaoturbina.projetoUnB",
+      "googleServicesFile": "./google-services.json",
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyDvj98fkMKB6M5UoCc_oKqYAu3WieerGQ4"
@@ -45,7 +44,15 @@
           }
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon.png",
+          "color": "#88C9BF",
+          "defaultChannel": "adocao"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

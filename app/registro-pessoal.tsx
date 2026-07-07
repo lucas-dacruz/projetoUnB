@@ -1,6 +1,7 @@
 import FormInput from '@/components/form-input';
 import ImageSelector from '@/components/image-selector';
-import { auth, db } from '@/firebaseConfig';
+import { ROUTES } from '@/constants/routes';
+import { auth, db } from '@/services/firebase';
 import { useRouter } from 'expo-router';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
@@ -66,10 +67,11 @@ export default function CadastroPessoalForm() {
         telefone,
         usuario,
         imagemBase64: imagemPerfil,
+        expoPushToken: null,
         criadoEm: new Date()
       });
 
-      router.push('/');
+      router.push(ROUTES.login);
     } catch (error) {
       console.log(error);
       alert('Erro ao criar usuário!');
@@ -79,7 +81,7 @@ export default function CadastroPessoalForm() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.replace('/cadastro')}>
+        <TouchableOpacity onPress={() => router.replace(ROUTES.cadastro)}>
           <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
         <Text style={styles.titleHeader}>Cadastro Pessoal</Text>

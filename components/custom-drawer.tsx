@@ -8,23 +8,14 @@ import {
   Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { auth, db } from '@/firebaseConfig';
+import { ROUTES } from '@/constants/routes';
+import { auth, db } from '@/services/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
 type UsuarioPerfil = {
   nome?: string;
   imagemBase64?: string | null;
 };
-
-function Icon({ name }: { name: string }) {
-  const icons: Record<string, string> = {
-    pets: '🐾',
-    info: 'ℹ',
-    settings: '⚙',
-    expand: '▾',
-  };
-  return <Text style={styles.icon}>{icons[name] ?? '•'}</Text>;
-}
 
 function Divider() {
   return <View style={styles.divider} />;
@@ -38,36 +29,8 @@ function MenuItem({ label, onPress }: { label: string; onPress?: () => void }) {
   );
 }
 
-function SectionHeader({
-  icon,
-  label,
-  color,
-  expanded,
-  onToggle,
-}: {
-  icon: string;
-  label: string;
-  color: string;
-  expanded: boolean;
-  onToggle: () => void;
-}) {
-  return (
-    <TouchableOpacity
-      style={[styles.sectionHeader, { backgroundColor: color }]}
-      onPress={onToggle}
-    >
-      <Icon name={icon} />
-      <Text style={styles.sectionLabel}>{label}</Text>
-      <Text style={[styles.expandIcon, expanded && styles.expandedIcon]}>▾</Text>
-    </TouchableOpacity>
-  );
-}
-
 export default function CustomDrawer() {
   const router = useRouter();
-  const [atalhos, setAtalhos] = useState(true);
-  const [informacoes, setInformacoes] = useState(true);
-  const [configuracoes, setConfiguracoes] = useState(true);
   const [perfil, setPerfil] = useState<UsuarioPerfil | null>(null);
 
   useEffect(() => {
@@ -117,72 +80,25 @@ export default function CustomDrawer() {
           </View>
         </View>
 
-        <MenuItem label="Meu perfil" />
+        <MenuItem label="Meus pets" onPress={() => router.push(ROUTES.meusPets)} />
         <Divider />
-        <MenuItem label="Meus pets" onPress={() => router.push('/(app)/meus-pets')} />
+        <MenuItem label="Adotar um pet" onPress={() => router.push(ROUTES.adotar)} />
         <Divider />
-        <MenuItem label="Favoritos" />
+        <MenuItem label="Cadastrar um pet" onPress={() => router.push(ROUTES.registroAnimal)} />
         <Divider />
-        <MenuItem label="Chat" onPress={() => router.push('/(app)/chat')} />
-
-        <SectionHeader
-          icon="pets"
-          label="Atalhos"
-          color="#fee29b"
-          expanded={atalhos}
-          onToggle={() => setAtalhos(!atalhos)}
-        />
-        {atalhos && (
-          <>
-            <MenuItem label="Cadastrar um pet" onPress={() => router.push('/(app)/home')} />
-            <Divider />
-            <MenuItem label="Adotar um pet" onPress={() => router.push('/adotar')}/>
-            <Divider />
-            <MenuItem label="Ajudar um pet" />
-            <Divider />
-            <MenuItem label="Apadrinhar um pet" />
-          </>
-        )}
-
-        <SectionHeader
-          icon="info"
-          label="Informações"
-          color="#cfe9e5"
-          expanded={informacoes}
-          onToggle={() => setInformacoes(!informacoes)}
-        />
-        {informacoes && (
-          <>
-            <MenuItem label="Dicas" />
-            <Divider />
-            <MenuItem label="Eventos" />
-            <Divider />
-            <MenuItem label="Legislação" />
-            <Divider />
-            <MenuItem label="Termo de adoção" />
-            <Divider />
-            <MenuItem label="Histórias de adoção" />
-          </>
-        )}
-
-        <SectionHeader
-          icon="settings"
-          label="Configurações"
-          color="#e6e7e8"
-          expanded={configuracoes}
-          onToggle={() => setConfiguracoes(!configuracoes)}
-        />
-        {configuracoes && (
-          <>
-            <MenuItem label="Privacidade" />
-          </>
-        )}
+        <MenuItem label="Chat" onPress={() => router.push(ROUTES.chat)} />
+        <Divider />
+        <MenuItem label="Notificações" onPress={() => router.push(ROUTES.notificacoes)} />
+        <Divider />
+        <MenuItem label="Mapa completo" onPress={() => router.push({ pathname: ROUTES.mapa })} />
+        <Divider />
+        <MenuItem label="Créditos" onPress={() => router.push(ROUTES.creditos)} />
 
       </ScrollView>
 
       <TouchableOpacity
         style={styles.logoutButton}
-        onPress={() => router.replace('/')}
+        onPress={() => router.replace(ROUTES.login)}
       >
         <Text style={styles.logoutText}>Sair</Text>
       </TouchableOpacity>
@@ -260,36 +176,9 @@ const styles = StyleSheet.create({
     width: 256,
   },
 
-  sectionHeader: {
-    height: 48,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingLeft: 16,
-    paddingRight: 16,
-  },
-
-  icon: {
-    fontSize: 20,
-    color: '#757575',
-    marginRight: 12,
-    width: 24,
-    textAlign: 'center',
-  },
-
-  sectionLabel: {
-    flex: 1,
-    fontFamily: 'Roboto_700Bold',
-    fontSize: 14,
-    color: '#434343',
-  },
-
   expandIcon: {
     fontSize: 20,
     color: '#757575',
-  },
-
-  expandedIcon: {
-    transform: [{ rotate: '180deg' }],
   },
 
   // Botão Sair

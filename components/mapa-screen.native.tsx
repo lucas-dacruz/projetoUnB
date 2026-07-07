@@ -1,4 +1,5 @@
-import { auth, db } from '@/firebaseConfig';
+import { ROUTES } from '@/constants/routes';
+import { auth, db } from '@/services/firebase';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import React, { useEffect, useRef, useState } from 'react';
@@ -17,6 +18,7 @@ type AnimalDocumento = {
   nome?: string;
   sobre?: string;
   ownerId?: string;
+  disponivel?: boolean;
 };
 
 type AnimalMapData = {
@@ -112,36 +114,41 @@ export default function MapaScreen() {
         const animaisSnapshot = await getDocs(collection(db, 'animais'));
 
         const lista = await Promise.all(
-          animaisSnapshot.docs.map(async (documento, index) => {
-            const animal = documento.data() as AnimalDocumento;
-            const fallback = getFallbackCoordinate(index);
-            let dono: UsuarioLocalizacao | null = null;
+          animaisSnapshot.docs
+            .filter((documento) => {
+              const animal = documento.data() as AnimalDocumento;
+              return animal.disponivel !== false;
+            })
+            .map(async (documento, index) => {
+              const animal = documento.data() as AnimalDocumento;
+              const fallback = getFallbackCoordinate(index);
+              let dono: UsuarioLocalizacao | null = null;
 
-            if (animal.ownerId) {
-              const donoSnap = await getDoc(doc(db, 'usuarios', animal.ownerId));
+              if (animal.ownerId) {
+                const donoSnap = await getDoc(doc(db, 'usuarios', animal.ownerId));
 
-              if (donoSnap.exists()) {
-                dono = donoSnap.data() as UsuarioLocalizacao;
+                if (donoSnap.exists()) {
+                  dono = donoSnap.data() as UsuarioLocalizacao;
+                }
               }
-            }
 
-            const latitude = typeof dono?.latitude === 'number' ? dono.latitude : fallback.latitude;
-            const longitude = typeof dono?.longitude === 'number' ? dono.longitude : fallback.longitude;
-            const distanciaKm = calcularDistanciaKm(localizacaoUsuario, { latitude, longitude });
+              const latitude = typeof dono?.latitude === 'number' ? dono.latitude : fallback.latitude;
+              const longitude = typeof dono?.longitude === 'number' ? dono.longitude : fallback.longitude;
+              const distanciaKm = calcularDistanciaKm(localizacaoUsuario, { latitude, longitude });
 
-            return {
-              id: documento.id,
-              nome: animal.nome || 'Pet sem nome',
-              sobre: animal.sobre,
-              ownerId: animal.ownerId,
-              donoNome: dono?.nome,
-              latitude,
-              longitude,
-              cidade: dono?.cidade || 'Brasília',
-              uf: dono?.uf || 'DF',
-              distanciaKm,
-            };
-          })
+              return {
+                id: documento.id,
+                nome: animal.nome || 'Pet sem nome',
+                sobre: animal.sobre,
+                ownerId: animal.ownerId,
+                donoNome: dono?.nome,
+                latitude,
+                longitude,
+                cidade: dono?.cidade || 'Brasília',
+                uf: dono?.uf || 'DF',
+                distanciaKm,
+              };
+            })
         );
 
         setAnimais(lista);
@@ -208,7 +215,7 @@ export default function MapaScreen() {
             description={formatarDistancia(animal.distanciaKm)}
             onPress={() => setAnimalSelecionado(animal)}
           >
-            <Callout onPress={() => router.push({ pathname: '/detalhes-animal', params: { id: animal.id } })}>
+            <Callout onPress={() => router.push({ pathname: ROUTES.detalhesAnimal, params: { id: animal.id } })}>
               <View style={styles.callout}>
                 <Text style={styles.calloutTitle}>{animal.nome}</Text>
                 <Text style={styles.calloutText}>{animal.donoNome ? `Tutor: ${animal.donoNome}` : 'Tutor não informado'}</Text>
@@ -240,7 +247,7 @@ export default function MapaScreen() {
 
           <TouchableOpacity
             style={styles.panelButton}
-            onPress={() => router.push({ pathname: '/detalhes-animal', params: { id: animalSelecionado.id } })}
+            onPress={() => router.push({ pathname: ROUTES.detalhesAnimal, params: { id: animalSelecionado.id } })}
           >
             <Text style={styles.panelButtonText}>Detalhes</Text>
           </TouchableOpacity>

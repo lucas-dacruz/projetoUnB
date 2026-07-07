@@ -1,5 +1,6 @@
 import PrimaryButton from '@/components/primary-button';
 import ScreenHeader from '@/components/screen-header';
+import { ROUTES } from '@/constants/routes';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -12,7 +13,7 @@ export default function SucessoAnimal() {
       <ScreenHeader
         title="Cadastro do Animal"
         leftText="←"
-        onLeftPress={() => router.replace('/home')}
+        onLeftPress={() => router.replace(ROUTES.home)}
         style={styles.header}
         leftTextStyle={styles.backIcon}
         titleStyle={styles.titleHeader}
@@ -33,7 +34,7 @@ export default function SucessoAnimal() {
           title="MEUS PETS"
           style={styles.button}
           textStyle={styles.buttonText}
-          onPress={() => router.replace('/home')}
+          onPress={() => router.replace(ROUTES.home)}
         />
       </View>
     </View>

@@ -2,7 +2,8 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-nativ
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebaseConfig';
+import { ROUTES } from '@/constants/routes';
+import { auth } from '@/services/firebase';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -17,9 +18,9 @@ export default function Login() {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.replace('/(app)/home');
-    } catch (error: any) {
-      router.push('/cadastro');
+      router.replace(ROUTES.home);
+    } catch {
+      router.push(ROUTES.cadastro);
     }
   };
 

@@ -1,5 +1,6 @@
 import PrimaryButton from '@/components/primary-button';
 import ScreenHeader from '@/components/screen-header';
+import { ROUTES } from '@/constants/routes';
 import { useRouter } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -12,7 +13,7 @@ export default function Cadastro() {
       <ScreenHeader
         title="Cadastro"
         leftText="←"
-        onLeftPress={() => router.replace('/')}
+        onLeftPress={() => router.replace(ROUTES.login)}
         style={styles.header}
         leftTextStyle={styles.back}
         titleStyle={styles.titleHeader}
@@ -29,7 +30,7 @@ export default function Cadastro() {
           title="FAZER CADASTRO"
           style={styles.button}
           textStyle={styles.buttonText}
-          onPress={() => router.push('/registro_pessoal' as any)}
+          onPress={() => router.push(ROUTES.registroPessoal)}
         />
 
         <Text style={styles.loginText}>
@@ -40,7 +41,7 @@ export default function Cadastro() {
           title="FAZER LOGIN"
           style={styles.button}
           textStyle={styles.buttonText}
-          onPress={() => router.push('/')}
+          onPress={() => router.push(ROUTES.login)}
         />
       </View>
 
