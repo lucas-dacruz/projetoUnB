@@ -1,4 +1,5 @@
 import { ROUTES } from '@/constants/routes';
+import { rejeicaoAdocaoRef, transferirPropriedadePet } from '@/services/adoption';
 import { auth, db } from '@/services/firebase';
 import { useRouter } from 'expo-router';
 import {
@@ -29,7 +30,7 @@ import {
 type Notificacao = {
   id: string;
   tipo?: 'intencao_adocao';
-  status?: 'pendente' | 'rejeitada' | 'negociacao' | 'aceita' | 'recusada' | 'em_negociacao' | 'aprovada';
+  status?: 'pendente' | 'rejeitada' | 'negociacao' | 'aceita' | 'recusada' | 'em_negociacao' | 'aprovada' | 'encerrada';
   animalId?: string;
   petId?: string;
   petNome?: string;
@@ -182,6 +183,10 @@ export default function Notificacoes() {
       if (notificacao.status === 'aceita' || notificacao.status === 'aprovada') {
         return 'Sua solicitação de adoção foi aceita.';
       }
+
+      if (notificacao.status === 'encerrada') {
+        return 'Este pet ja foi adotado.';
+      }
     }
 
     if (notificacao.tipo === 'intencao_adocao') {
@@ -258,6 +263,42 @@ export default function Notificacoes() {
           notificacao,
           status === 'negociacao' ? 'negociacao' : 'transferencia'
         );
+      }
+
+      if (status === 'rejeitada') {
+        const animalId = notificacao.animalId || notificacao.petId;
+        const interessadoId = notificacao.interessadoId || notificacao.adotanteId;
+
+        if (!animalId || !interessadoId || !notificacao.donoId) {
+          throw new Error('Notificacao sem dados suficientes para registrar rejeicao.');
+        }
+
+        const batch = writeBatch(db);
+
+        batch.update(doc(db, 'notificacoes', notificacao.id), dadosAtualizacao);
+        batch.set(
+          rejeicaoAdocaoRef(animalId, interessadoId),
+          {
+            petId: animalId,
+            usuarioId: interessadoId,
+            donoId: notificacao.donoId,
+            notificacaoId: notificacao.id,
+            createdAt: serverTimestamp(),
+          },
+          { merge: true }
+        );
+
+        await batch.commit();
+        return;
+      }
+
+      if (status === 'aceita') {
+        await transferirPropriedadePet(
+          notificacao,
+          dadosAtualizacao.chatId as string | null,
+          dadosAtualizacao
+        );
+        return;
       }
 
       await updateDoc(doc(db, 'notificacoes', notificacao.id), dadosAtualizacao);

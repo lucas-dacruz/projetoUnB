@@ -13,4 +13,5 @@ export const ROUTES = {
   mapa: '/(app)/mapa',
   meusPets: '/(app)/meus-pets',
   notificacoes: '/(app)/notificacoes',
+  creditos: '/creditos' as Href,
 } as const satisfies Record<string, Href>;

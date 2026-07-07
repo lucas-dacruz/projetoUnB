@@ -91,6 +91,8 @@ export default function CustomDrawer() {
         <MenuItem label="Notificações" onPress={() => router.push(ROUTES.notificacoes)} />
         <Divider />
         <MenuItem label="Mapa completo" onPress={() => router.push({ pathname: ROUTES.mapa })} />
+        <Divider />
+        <MenuItem label="Créditos" onPress={() => router.push(ROUTES.creditos)} />
 
       </ScrollView>
 
